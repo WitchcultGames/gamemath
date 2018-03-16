@@ -1,0 +1,6 @@
+[package]
+name = "gamemath"
+version = "0.1.0"
+authors = ["David \"Dregel\" Bengtsson <david@witchcult.se>"]
+
+[dependencies]

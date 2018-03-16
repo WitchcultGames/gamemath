@@ -2,5 +2,10 @@
 name = "gamemath"
 version = "0.1.0"
 authors = ["David \"Dregel\" Bengtsson <david@witchcult.se>"]
+description = "A simple math library for game development, written in Rust."
+keywords = ["math", "game", "linalg", "vector", "matrix"]
+license ="MIT"
+maintenance = {status = "passively-maintained"}
+repository = "https://github.com/WitchcultGames/gamemath"
 
 [dependencies]

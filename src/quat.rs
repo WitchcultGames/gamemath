@@ -1,4 +1,5 @@
 use vec3::Vec3;
+use vec4::Vec4;
 use mat4::Mat4;
 use std::ops::{Add, AddAssign, Mul, MulAssign};
 
@@ -12,12 +13,7 @@ pub struct Quat {
 
 impl Quat {
     pub fn identity() -> Quat {
-        Quat {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 1.0,
-        }
+        Self::default()
     }
 
     pub fn rotation(axis: Vec3, angle: f32) -> Quat {
@@ -96,6 +92,61 @@ impl Quat {
     }
 }
 
+impl Default for Quat {
+    fn default() -> Quat {
+        Quat {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 1.0,
+        }
+    }
+}
+
+impl From<f32> for Quat {
+    fn from(value: f32) -> Quat {
+        Quat {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: value,
+        }
+    }
+}
+
+impl From<Vec4> for Quat {
+    fn from(vec: Vec4) -> Quat {
+        Quat {
+            x: vec.x,
+            y: vec.y,
+            z: vec.z,
+            w: vec.w,
+        }
+    }
+}
+
+impl From<(f32, f32, f32, f32)> for Quat {
+    fn from(tuple: (f32, f32, f32, f32)) -> Quat {
+        Quat {
+            x: tuple.0,
+            y: tuple.1,
+            z: tuple.2,
+            w: tuple.3,
+        }
+    }
+}
+
+impl From<[f32; 4]> for Quat {
+    fn from(slice: [f32; 4]) -> Quat {
+        Quat {
+            x: slice[0],
+            y: slice[1],
+            z: slice[2],
+            w: slice[3],
+        }
+    }
+}
+
 impl Mul<Quat> for Quat {
     type Output = Quat;
 
@@ -133,33 +184,3 @@ impl AddAssign<Quat> for Quat {
         *self = *self + right;
     }
 }
-
-//impl Into<Mat4> for Quat {
-//    fn into(self) -> Mat4 {
-//        let mut result = Mat4::identity();
-//        let x2 = self.x * 2.0;
-//        let y2 = self.y * 2.0;
-//        let z2 = self.z * 2.0;
-//        let xx = self.x * x2;
-//        let yx = self.y * x2;
-//        let zx = self.z * x2;
-//        let wx = self.w * x2;
-//        let yy = self.y * y2;
-//        let zy = self.z * y2;
-//        let wy = self.w * y2;
-//        let zz = self.z * z2;
-//        let wz = self.w * z2;
-//
-//        result[0][0] = 1.0 - yy - zz;
-//        result[0][1] = yx + wz;
-//        result[0][2] = zx - wy;
-//        result[1][0] = yx - wz;
-//        result[1][1] = 1.0 - xx - zz;
-//        result[1][2] = zy + wx;
-//        result[2][0] = zx + wy;
-//        result[2][1] = zy - wx;
-//        result[2][2] = 1.0 - xx - yy;
-//
-//        result
-//    }
-//}

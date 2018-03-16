@@ -1,6 +1,7 @@
 use std;
 use vec3::Vec3;
 use vec4::Vec4;
+use quat::Quat;
 use std::f32::consts::PI;
 
 #[derive(Clone, Copy)]
@@ -301,7 +302,10 @@ impl Default for Mat4 {
 impl From<f32> for Mat4 {
     fn from(value: f32) -> Mat4 {
         Mat4 {
-            rows: [value.into(), value.into(), value.into(), value.into()],
+            rows: [(value, 0.0, 0.0, 0.0).into(),
+                   (0.0, value, 0.0, 0.0).into(),
+                   (0.0, 0.0, value, 0.0).into(),
+                   (0.0, 0.0, 0.0, value).into()],
         }
     }
 }
@@ -317,6 +321,64 @@ impl From<((f32, f32, f32, f32),
         Mat4 {
             rows: [tuple.0.into(), tuple.1.into(), tuple.2.into(), tuple.3.into()],
         }
+    }
+}
+
+impl From<(f32, f32, f32, f32,
+           f32, f32, f32, f32,
+           f32, f32, f32, f32,
+           f32, f32, f32, f32)> for Mat4 {
+    fn from(tuple: (f32, f32, f32, f32,
+                    f32, f32, f32, f32,
+                    f32, f32, f32, f32,
+                    f32, f32, f32, f32)) -> Mat4 {
+        Mat4 {
+            rows: [(tuple.0, tuple.1, tuple.2, tuple.3).into(),
+                   (tuple.4, tuple.5, tuple.6, tuple.7).into(),
+                   (tuple.8, tuple.9, tuple.10, tuple.11).into(),
+                   (tuple.12, tuple.13, tuple.14, tuple.15).into()],
+        }
+    }
+}
+
+impl From<[[f32; 4]; 4]> for Mat4 {
+    fn from(slice: [[f32; 4]; 4]) -> Mat4 {
+        Mat4 {
+            rows: [slice[0].into(), slice[1].into(), slice[2].into(), slice[3].into()],
+        }
+    }
+}
+
+impl From<[f32; 16]> for Mat4 {
+    fn from(slice: [f32; 16]) -> Mat4 {
+        Mat4 {
+            rows: [(slice[ 0], slice[ 1], slice[ 2], slice[ 3]).into(),
+                   (slice[ 4], slice[ 5], slice[ 6], slice[ 7]).into(),
+                   (slice[ 8], slice[ 9], slice[10], slice[11]).into(),
+                   (slice[12], slice[13], slice[14], slice[15]).into()],
+        }
+    }
+}
+
+impl From<[Vec4; 4]> for Mat4 {
+    fn from(slice: [Vec4; 4]) -> Mat4 {
+        Mat4 {
+            rows: [slice[0], slice[1], slice[2], slice[3]],
+        }
+    }
+}
+
+impl From<(Vec4, Vec4, Vec4, Vec4)> for Mat4 {
+    fn from(tuple: (Vec4, Vec4, Vec4, Vec4)) -> Mat4 {
+        Mat4 {
+            rows: [tuple.0, tuple.1, tuple.2, tuple.3],
+        }
+    }
+}
+
+impl From<Quat> for Mat4 {
+    fn from(quat: Quat) -> Mat4 {
+        quat.extract_matrix()
     }
 }
 
@@ -343,6 +405,20 @@ impl std::ops::IndexMut<usize> for Mat4 {
             3 => &mut self.rows[3],
             _ => panic!("Mat4 index out of range!"),
         }
+    }
+}
+
+impl std::ops::Index<(usize, usize)> for Mat4 {
+    type Output = f32;
+
+    fn index(&self, index: (usize, usize)) -> &f32 {
+        &self.rows[index.0][index.1]
+    }
+}
+
+impl std::ops::IndexMut<(usize, usize)> for Mat4 {
+    fn index_mut(&mut self, index: (usize, usize)) -> &mut f32 {
+        &mut self.rows[index.0][index.1]
     }
 }
 

@@ -9,17 +9,17 @@ impl Curve {
         }
     }
 
-    pub fn lerp(&self, t: f32) -> f32 {
+    pub fn lerp(&self, factor: f32) -> f32 {
         let len = self.0.len();
 
         if len > 1 {
-            if t < 1.0 {
-                let scaled_t = t * (len - 1) as f32;
-                let start = self.0[scaled_t as usize];
-                let end = self.0[(scaled_t + 1.0) as usize];
-                let new_t = scaled_t - (scaled_t as u32) as f32;
+            if factor < 1.0 {
+                let factor_scaled = factor * (len - 1) as f32;
+                let start = self.0[factor_scaled as usize];
+                let end = self.0[(factor_scaled + 1.0) as usize];
+                let factor_new = factor_scaled - (factor_scaled as u32) as f32;
 
-                lerp(start, end, new_t)
+                lerp(start, end, factor_new)
             } else if len > 0 {
                 self.0[len - 1]
             } else {

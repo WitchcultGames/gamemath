@@ -1,6 +1,7 @@
 use std;
 use vec2::Vec2;
 use vec3::Vec3;
+use quat::Quat;
 
 #[derive(Clone, Copy)]
 pub struct Vec4 {
@@ -110,6 +111,17 @@ impl From<Vec3> for Vec4 {
             y: vec.y,
             z: vec.z,
             w: 0.0,
+        }
+    }
+}
+
+impl From<Quat> for Vec4 {
+    fn from(quat: Quat) -> Vec4 {
+        Vec4 {
+            x: quat.x,
+            y: quat.y,
+            z: quat.z,
+            w: quat.w,
         }
     }
 }

@@ -20,10 +20,8 @@ impl Curve {
                 let factor_new = factor_scaled - (factor_scaled as u32) as f32;
 
                 lerp(start, end, factor_new)
-            } else if len > 0 {
-                self.0[len - 1]
             } else {
-                1.0
+                self.0[len - 1]
             }
         } else if len == 1 {
             self.0[0]

@@ -1,6 +1,6 @@
 [package]
 name = "gamemath"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["David \"Dregel\" Bengtsson <david@witchcult.se>"]
 description = "A simple math library for game development, written in Rust."
 keywords = ["math", "game", "linalg", "vector", "matrix"]

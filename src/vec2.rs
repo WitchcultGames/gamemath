@@ -2,7 +2,7 @@ use std;
 use vec3::Vec3;
 use vec4::Vec4;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vec2 {
     pub x: f32,
     pub y: f32,

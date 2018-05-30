@@ -3,7 +3,7 @@ use vec4::Vec4;
 use mat4::Mat4;
 use std::ops::{Add, AddAssign, Mul, MulAssign};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Quat {
     pub x: f32,
     pub y: f32,

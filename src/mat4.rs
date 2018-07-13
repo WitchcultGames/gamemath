@@ -4,7 +4,7 @@ use vec4::Vec4;
 use quat::Quat;
 use std::f32::consts::PI;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Mat4 {
     pub rows: [Vec4; 4],
 }

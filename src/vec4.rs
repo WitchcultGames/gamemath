@@ -1,18 +1,21 @@
-use std;
+use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Neg, Index, IndexMut};
+use std::fmt::Debug;
 use vec2::Vec2;
 use vec3::Vec3;
-use quat::Quat;
+//use quat::Quat;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec4 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32,
+pub struct Vec4<T> {
+    pub x: T,
+    pub y: T,
+    pub z: T,
+    pub w: T,
 }
 
-impl Vec4 {
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vec4 {
+impl<T> Vec4<T>
+    where T: Copy + Debug + PartialEq + Default + Sub<Output = T> + Mul<Output = T> + Add<Output = T>,
+{
+    pub fn new(x: T, y: T, z: T, w: T) -> Vec4<T> {
         Vec4 {
             x,
             y,
@@ -21,26 +24,28 @@ impl Vec4 {
         }
     }
 
-    pub fn dot(&self, right: Vec4) -> f32 {
+    pub fn dot(&self, right: Vec4<T>) -> T {
         self.x * right.x + self.y * right.y + self.z * right.z + self.w * right.w
     }
 
-    pub fn fill(&mut self, value: f32) {
+    pub fn fill(&mut self, value: T) {
         self.x = value;
         self.y = value;
         self.z = value;
         self.w = value;
     }
 
-    pub fn length_squared(&self) -> f32 {
+    pub fn length_squared(&self) -> T {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
     }
+}
 
+impl Vec4<f32> {
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
 
-    pub fn normalized(&self) -> Vec4 {
+    pub fn normalized(&self) -> Vec4<f32> {
         let mut length = self.length();
 
         if length == 0.0 {
@@ -60,19 +65,19 @@ impl Vec4 {
     }
 }
 
-impl Default for Vec4 {
-    fn default() -> Vec4 {
+impl<T: Default> Default for Vec4<T> {
+    fn default() -> Vec4<T> {
         Vec4 {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 0.0,
+            x: T::default(),
+            y: T::default(),
+            z: T::default(),
+            w: T::default(),
         }
     }
 }
 
-impl From<(f32, f32, f32, f32)> for Vec4 {
-    fn from(tuple: (f32, f32, f32, f32)) -> Vec4 {
+impl<T> From<(T, T, T, T)> for Vec4<T> {
+    fn from(tuple: (T, T, T, T)) -> Vec4<T>{
         Vec4 {
             x: tuple.0,
             y: tuple.1,
@@ -82,8 +87,8 @@ impl From<(f32, f32, f32, f32)> for Vec4 {
     }
 }
 
-impl From<[f32; 4]> for Vec4 {
-    fn from(slice: [f32; 4]) -> Vec4 {
+impl<T: Copy> From<[T; 4]> for Vec4<T> {
+    fn from(slice: [T; 4]) -> Vec4<T> {
         Vec4 {
             x: slice[0],
             y: slice[1],
@@ -93,41 +98,41 @@ impl From<[f32; 4]> for Vec4 {
     }
 }
 
-impl From<Vec2> for Vec4 {
-    fn from(vec: Vec2) -> Vec4 {
+impl<T: Default> From<Vec2<T>> for Vec4<T> {
+    fn from(vec: Vec2<T>) -> Vec4<T> {
         Vec4 {
             x: vec.x,
             y: vec.y,
-            z: 0.0,
-            w: 0.0,
+            z: T::default(),
+            w: T::default(),
         }
     }
 }
 
-impl From<Vec3> for Vec4 {
-    fn from(vec: Vec3) -> Vec4 {
+impl<T: Default> From<Vec3<T>> for Vec4<T> {
+    fn from(vec: Vec3<T>) -> Vec4<T> {
         Vec4 {
             x: vec.x,
             y: vec.y,
             z: vec.z,
-            w: 0.0,
+            w: T::default(),
         }
     }
 }
 
-impl From<Quat> for Vec4 {
-    fn from(quat: Quat) -> Vec4 {
-        Vec4 {
-            x: quat.x,
-            y: quat.y,
-            z: quat.z,
-            w: quat.w,
-        }
-    }
-}
+//impl From<Quat> for Vec4 {
+//    fn from(quat: Quat) -> Vec4 {
+//        Vec4 {
+//            x: quat.x,
+//            y: quat.y,
+//            z: quat.z,
+//            w: quat.w,
+//        }
+//    }
+//}
 
-impl From<f32> for Vec4 {
-    fn from(value: f32) -> Vec4 {
+impl<T: Copy> From<T> for Vec4<T> {
+    fn from(value: T) -> Vec4<T> {
         Vec4 {
             x: value,
             y: value,
@@ -137,10 +142,10 @@ impl From<f32> for Vec4 {
     }
 }
 
-impl std::ops::Index<usize> for Vec4 {
-    type Output = f32;
+impl<T> Index<usize> for Vec4<T> {
+    type Output = T;
 
-    fn index(&self, index: usize) -> &f32 {
+    fn index(&self, index: usize) -> &T {
         match index {
             0 => &self.x,
             1 => &self.y,
@@ -151,8 +156,8 @@ impl std::ops::Index<usize> for Vec4 {
     }
 }
 
-impl std::ops::IndexMut<usize> for Vec4 {
-    fn index_mut(&mut self, index: usize) -> &mut f32 {
+impl<T> IndexMut<usize> for Vec4<T> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
         match index {
             0 => &mut self.x,
             1 => &mut self.y,
@@ -163,10 +168,10 @@ impl std::ops::IndexMut<usize> for Vec4 {
     }
 }
 
-impl std::ops::Add for Vec4 {
-    type Output = Vec4;
+impl<T: Add<Output = T>> Add for Vec4<T> {
+    type Output = Vec4<T>;
 
-    fn add(self, right: Vec4) -> Vec4 {
+    fn add(self, right: Vec4<T>) -> Vec4<T> {
         Vec4 {
             x: self.x + right.x,
             y: self.y + right.y,
@@ -176,8 +181,8 @@ impl std::ops::Add for Vec4 {
     }
 }
 
-impl std::ops::AddAssign for Vec4 {
-    fn add_assign(&mut self, right: Vec4) {
+impl<T: AddAssign> AddAssign for Vec4<T> {
+    fn add_assign(&mut self, right: Vec4<T>) {
         self.x += right.x;
         self.y += right.y;
         self.z += right.z;
@@ -185,10 +190,10 @@ impl std::ops::AddAssign for Vec4 {
     }
 }
 
-impl std::ops::Sub for Vec4 {
-    type Output = Vec4;
+impl<T: Sub<Output = T>> Sub for Vec4<T> {
+    type Output = Vec4<T>;
 
-    fn sub(self, right: Vec4) -> Vec4 {
+    fn sub(self, right: Vec4<T>) -> Vec4<T> {
         Vec4 {
             x: self.x - right.x,
             y: self.y - right.y,
@@ -198,8 +203,8 @@ impl std::ops::Sub for Vec4 {
     }
 }
 
-impl std::ops::SubAssign for Vec4 {
-    fn sub_assign(&mut self, right: Vec4) {
+impl<T: SubAssign> SubAssign for Vec4<T> {
+    fn sub_assign(&mut self, right: Vec4<T>) {
         self.x -= right.x;
         self.y -= right.y;
         self.z -= right.z;
@@ -207,10 +212,10 @@ impl std::ops::SubAssign for Vec4 {
     }
 }
 
-impl std::ops::Mul<f32> for Vec4 {
-    type Output = Vec4;
+impl<T: Copy + Mul<Output = T>> Mul<T> for Vec4<T> {
+    type Output = Vec4<T>;
 
-    fn mul(self, right: f32) -> Vec4 {
+    fn mul(self, right: T) -> Vec4<T> {
         Vec4 {
             x: self.x * right,
             y: self.y * right,
@@ -220,8 +225,8 @@ impl std::ops::Mul<f32> for Vec4 {
     }
 }
 
-impl std::ops::MulAssign<f32> for Vec4 {
-    fn mul_assign(&mut self, right: f32) {
+impl<T: Copy + MulAssign> MulAssign<T> for Vec4<T> {
+    fn mul_assign(&mut self, right: T) {
         self.x *= right;
         self.y *= right;
         self.z *= right;
@@ -229,10 +234,10 @@ impl std::ops::MulAssign<f32> for Vec4 {
     }
 }
 
-impl std::ops::Neg for Vec4 {
-    type Output = Vec4;
+impl<T: Neg<Output = T>> Neg for Vec4<T> {
+    type Output = Vec4<T>;
 
-    fn neg(self) -> Vec4 {
+    fn neg(self) -> Vec4<T> {
         Vec4 {
             x: -self.x,
             y: -self.y,

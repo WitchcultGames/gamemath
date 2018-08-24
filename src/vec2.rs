@@ -1,39 +1,44 @@
-use std;
+use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Neg, Index, IndexMut};
+use std::fmt::Debug;
 use vec3::Vec3;
-use vec4::Vec4;
+//use vec4::Vec4;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32,
+pub struct Vec2<T> {
+    pub x: T,
+    pub y: T,
 }
 
-impl Vec2 {
-    pub fn new(x: f32, y: f32) -> Vec2 {
+impl<T> Vec2<T>
+    where T: Copy + Debug + PartialEq + Default + Mul<Output = T> + Add<Output = T>,
+{
+    pub fn new(x: T, y: T) -> Vec2<T> {
         Vec2 {
             x,
             y,
         }
     }
 
-    pub fn dot(&self, right: Vec2) -> f32 {
+    pub fn dot(&self, right: Vec2<T>) -> T {
         self.x * right.x + self.y * right.y
     }
 
-    pub fn fill(&mut self, value: f32) {
+    pub fn fill(&mut self, value: T) {
         self.x = value;
         self.y = value;
     }
 
-    pub fn length_squared(&self) -> f32 {
+    pub fn length_squared(&self) -> T {
         self.x * self.x + self.y * self.y
     }
+}
 
+impl Vec2<f32> {
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
 
-    pub fn normalized(&self) -> Vec2 {
+    pub fn normalized(&self) -> Vec2<f32> {
         let mut length = self.length();
 
         if length == 0.0 {
@@ -51,17 +56,42 @@ impl Vec2 {
     }
 }
 
-impl Default for Vec2 {
-    fn default() -> Vec2 {
+impl Vec2<f64> {
+    pub fn length(&self) -> f64 {
+        self.length_squared().sqrt()
+    }
+
+    pub fn normalized(&self) -> Vec2<f64> {
+        let mut length = self.length();
+
+        if length == 0.0 {
+            length = 1.0;
+        }
+
         Vec2 {
-            x: 0.0,
-            y: 0.0,
+            x: self.x / length,
+            y: self.y / length,
+        }
+    }
+
+    pub fn normalize(&mut self) {
+        *self = self.normalized();
+    }
+}
+
+impl<T> Default for Vec2<T>
+    where T: Default,
+{
+    fn default() -> Vec2<T> {
+        Vec2 {
+            x: T::default(),
+            y: T::default(),
         }
     }
 }
 
-impl From<(f32, f32)> for Vec2 {
-    fn from(tuple: (f32, f32)) -> Vec2 {
+impl<T> From<(T, T)> for Vec2<T> {
+    fn from(tuple: (T, T)) -> Vec2<T> {
         Vec2 {
             x: tuple.0,
             y: tuple.1,
@@ -69,8 +99,8 @@ impl From<(f32, f32)> for Vec2 {
     }
 }
 
-impl From<[f32; 2]> for Vec2 {
-    fn from(slice: [f32; 2]) -> Vec2 {
+impl<T: Copy> From<[T; 2]> for Vec2<T> {
+    fn from(slice: [T; 2]) -> Vec2<T> {
         Vec2 {
             x: slice[0],
             y: slice[1],
@@ -78,8 +108,8 @@ impl From<[f32; 2]> for Vec2 {
     }
 }
 
-impl From<Vec3> for Vec2 {
-    fn from(vector: Vec3) -> Vec2 {
+impl<T> From<Vec3<T>> for Vec2<T> {
+    fn from(vector: Vec3<T>) -> Vec2<T> {
         Vec2 {
             x: vector.x,
             y: vector.y,
@@ -87,17 +117,17 @@ impl From<Vec3> for Vec2 {
     }
 }
 
-impl From<Vec4> for Vec2 {
-    fn from(vector: Vec4) -> Vec2 {
-        Vec2 {
-            x: vector.x,
-            y: vector.y,
-        }
-    }
-}
+//impl From<Vec4> for Vec2 {
+//    fn from(vector: Vec4) -> Vec2 {
+//        Vec2 {
+//            x: vector.x,
+//            y: vector.y,
+//        }
+//    }
+//}
 
-impl From<f32> for Vec2 {
-    fn from(value: f32) -> Vec2 {
+impl<T: Copy> From<T> for Vec2<T> {
+    fn from(value: T) -> Vec2<T> {
         Vec2 {
             x: value,
             y: value,
@@ -105,10 +135,10 @@ impl From<f32> for Vec2 {
     }
 }
 
-impl std::ops::Index<usize> for Vec2 {
-    type Output = f32;
+impl<T> Index<usize> for Vec2<T> {
+    type Output = T;
 
-    fn index(&self, index: usize) -> &f32 {
+    fn index(&self, index: usize) -> &T {
         match index {
             0 => &self.x,
             1 => &self.y,
@@ -117,8 +147,8 @@ impl std::ops::Index<usize> for Vec2 {
     }
 }
 
-impl std::ops::IndexMut<usize> for Vec2 {
-    fn index_mut(&mut self, index: usize) -> &mut f32 {
+impl<T> IndexMut<usize> for Vec2<T> {
+    fn index_mut(&mut self, index: usize) -> &mut T {
         match index {
             0 => &mut self.x,
             1 => &mut self.y,
@@ -127,10 +157,10 @@ impl std::ops::IndexMut<usize> for Vec2 {
     }
 }
 
-impl std::ops::Add for Vec2 {
-    type Output = Vec2;
+impl<T: Add<Output = T>> Add for Vec2<T> {
+    type Output = Vec2<T>;
 
-    fn add(self, right: Vec2) -> Vec2 {
+    fn add(self, right: Vec2<T>) -> Vec2<T> {
         Vec2 {
             x: self.x + right.x,
             y: self.y + right.y,
@@ -138,17 +168,17 @@ impl std::ops::Add for Vec2 {
     }
 }
 
-impl std::ops::AddAssign for Vec2 {
-    fn add_assign(&mut self, right: Vec2) {
+impl<T: AddAssign> AddAssign for Vec2<T> {
+    fn add_assign(&mut self, right: Vec2<T>) {
         self.x += right.x;
         self.y += right.y;
     }
 }
 
-impl std::ops::Sub for Vec2 {
-    type Output = Vec2;
+impl<T: Sub<Output = T>> Sub for Vec2<T> {
+    type Output = Vec2<T>;
 
-    fn sub(self, right: Vec2) -> Vec2 {
+    fn sub(self, right: Vec2<T>) -> Vec2<T> {
         Vec2 {
             x: self.x - right.x,
             y: self.y - right.y,
@@ -156,17 +186,17 @@ impl std::ops::Sub for Vec2 {
     }
 }
 
-impl std::ops::SubAssign for Vec2 {
-    fn sub_assign(&mut self, right: Vec2) {
+impl<T: SubAssign> SubAssign for Vec2<T> {
+    fn sub_assign(&mut self, right: Vec2<T>) {
         self.x -= right.x;
         self.y -= right.y;
     }
 }
 
-impl std::ops::Mul<f32> for Vec2 {
-    type Output = Vec2;
+impl<T: Mul<Output = T> + Copy> Mul<T> for Vec2<T> {
+    type Output = Vec2<T>;
 
-    fn mul(self, right: f32) -> Vec2 {
+    fn mul(self, right: T) -> Vec2<T> {
         Vec2 {
             x: self.x * right,
             y: self.y * right,
@@ -174,17 +204,17 @@ impl std::ops::Mul<f32> for Vec2 {
     }
 }
 
-impl std::ops::MulAssign<f32> for Vec2 {
-    fn mul_assign(&mut self, right: f32) {
+impl<T: MulAssign + Copy> MulAssign<T> for Vec2<T> {
+    fn mul_assign(&mut self, right: T) {
         self.x *= right;
         self.y *= right;
     }
 }
 
-impl std::ops::Neg for Vec2 {
-    type Output = Vec2;
+impl<T: Neg<Output = T>> Neg for Vec2<T> {
+    type Output = Vec2<T>;
 
-    fn neg(self) -> Vec2 {
+    fn neg(self) -> Vec2<T> {
         Vec2 {
             x: -self.x,
             y: -self.y,

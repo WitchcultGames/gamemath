@@ -16,7 +16,7 @@ impl Quat {
         Self::default()
     }
 
-    pub fn rotation(axis: Vec3, angle: f32) -> Quat {
+    pub fn rotation(axis: Vec3<f32>, angle: f32) -> Quat {
         let r = angle / 2.0;
         let s = r.sin();
 
@@ -28,11 +28,11 @@ impl Quat {
         }
     }
 
-    pub fn rotate(&mut self, axis: Vec3, angle: f32) {
+    pub fn rotate(&mut self, axis: Vec3<f32>, angle: f32) {
         *self = *self * Quat::rotation(axis.normalized(), angle);
     }
 
-    pub fn rotated(&mut self, axis: Vec3, angle: f32) -> Quat {
+    pub fn rotated(&mut self, axis: Vec3<f32>, angle: f32) -> Quat {
         *self * Quat::rotation(axis.normalized(), angle)
     }
 
@@ -114,8 +114,8 @@ impl From<f32> for Quat {
     }
 }
 
-impl From<Vec4> for Quat {
-    fn from(vec: Vec4) -> Quat {
+impl From<Vec4<f32>> for Quat {
+    fn from(vec: Vec4<f32>) -> Quat {
         Quat {
             x: vec.x,
             y: vec.y,

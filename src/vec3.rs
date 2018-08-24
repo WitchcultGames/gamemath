@@ -1,6 +1,7 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Neg, Index, IndexMut};
 use std::fmt::Debug;
 use vec2::Vec2;
+use vec4::Vec4;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3<T> {
@@ -131,15 +132,15 @@ impl<T: Default> From<Vec2<T>> for Vec3<T> {
     }
 }
 
-//impl From<Vec4> for Vec3 {
-//    fn from(vec: Vec4) -> Vec3 {
-//        Vec3 {
-//            x: vec.x,
-//            y: vec.y,
-//            z: vec.z,
-//        }
-//    }
-//}
+impl<T> From<Vec4<T>> for Vec3<T> {
+    fn from(vec: Vec4<T>) -> Vec3<T> {
+        Vec3 {
+            x: vec.x,
+            y: vec.y,
+            z: vec.z,
+        }
+    }
+}
 
 impl<T: Copy> From<T> for Vec3<T> {
     fn from(value: T) -> Vec3<T> {

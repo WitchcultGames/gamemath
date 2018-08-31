@@ -5,8 +5,14 @@ pub mod mat4;
 pub mod quat;
 pub mod curve;
 
-pub fn lerp(start: f32, end: f32, factor: f32) -> f32 {
-    let factor_clamped = 0.0_f32.max(1.0_f32.min(factor));
+pub trait Lerp {
+    fn lerp(start: Self, end: Self, factor: f32) -> Self;
+}
 
-    (1.0 - factor_clamped) * start + factor_clamped * end
+impl Lerp for f32 {
+    fn lerp(start: f32, end: f32, factor: f32) -> f32 {
+        let factor_clamped = 0.0_f32.max(1.0_f32.min(factor));
+
+        (1.0 - factor_clamped) * start + factor_clamped * end
+    }
 }

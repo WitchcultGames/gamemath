@@ -1,15 +1,15 @@
-use super::lerp;
+use super::Lerp;
 
-pub struct Curve(Vec<f32>);
+pub struct Curve<T>(Vec<T>);
 
-impl Curve {
-    pub fn new(values: &[f32]) -> Curve {
+impl<T: Lerp + Default + Clone + Copy> Curve<T> {
+    pub fn new(values: &[T]) -> Curve<T> {
         Curve {
             0: values.into(),
         }
     }
 
-    pub fn lerp(&self, factor: f32) -> f32 {
+    pub fn lerp(&self, factor: f32) -> T {
         let len = self.0.len();
 
         if len > 1 {
@@ -19,14 +19,14 @@ impl Curve {
                 let end = self.0[(factor_scaled + 1.0) as usize];
                 let new_factor = factor_scaled - (factor_scaled as u32) as f32;
 
-                lerp(start, end, new_factor)
+                T::lerp(start, end, new_factor)
             } else {
                 self.0[len - 1]
             }
         } else if len == 1 {
             self.0[0]
         } else {
-            1.0
+            T::default()
         }
     }
 }

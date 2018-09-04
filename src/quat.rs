@@ -3,47 +3,136 @@ use vec4::Vec4;
 use mat4::Mat4;
 use std::ops::{Add, AddAssign, Mul, MulAssign};
 
-#[derive(Copy, Clone, Debug)]
+/// A quaternion data type used for representing spatial rotation in a 3D enviornment.
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Quat {
+    /// The X/first component of the quaternion.
     pub x: f32,
+    /// The Y/first component of the quaternion.
     pub y: f32,
+    /// The Z/first component of the quaternion.
     pub z: f32,
+    /// The W/first component of the quaternion.
     pub w: f32,
 }
 
 impl Quat {
+    /// Constructs an identity quaternion.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Quat;
+    ///
+    /// let q = Quat::identity();
+    ///
+    /// assert_eq!(q, (0.0, 0.0, 0.0, 1.0).into());
+    /// ```
     pub fn identity() -> Quat {
         Self::default()
     }
 
-    pub fn rotation(axis: Vec3<f32>, angle: f32) -> Quat {
-        let r = angle / 2.0;
+    /// Constructs a rotation quaternion from an angle and an axis.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Vec3, Quat};
+    ///
+    /// let q = Quat::rotation(1.0, Vec3::new(1.0, 2.0, 3.0));
+    ///
+    /// assert_eq!(q, (0.12813187, 0.25626373, 0.38439557, 0.87758255).into());
+    /// ```
+    pub fn rotation(radians: f32, axis: Vec3<f32>) -> Quat {
+        let a = axis.normalized();
+        let r = radians / 2.0;
         let s = r.sin();
 
         Quat {
-            x: axis.x * s,
-            y: axis.y * s,
-            z: axis.z * s,
+            x: a.x * s,
+            y: a.y * s,
+            z: a.z * s,
             w: r.cos(),
         }
     }
 
-    pub fn rotate(&mut self, axis: Vec3<f32>, angle: f32) {
-        *self = *self * Quat::rotation(axis.normalized(), angle);
+    /// Calculate and returns a quaternion representing the calling object rotated by an angle
+    /// around an axis.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Vec3, Quat};
+    ///
+    /// let q = Quat::identity();
+    ///
+    /// assert_eq!(q.rotated(1.0, Vec3::new(1.0, 2.0, 3.0)), (0.12813187, 0.25626373, 0.38439557, 0.87758255).into());
+    /// ```
+    pub fn rotated(&self, radians: f32, axis: Vec3<f32>) -> Quat {
+        *self * Quat::rotation(radians, axis)
     }
 
-    pub fn rotated(&mut self, axis: Vec3<f32>, angle: f32) -> Quat {
-        *self * Quat::rotation(axis.normalized(), angle)
+    /// Applies a rotation around and axis by an angle on the calling `Quat` object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Vec3, Quat};
+    ///
+    /// let mut q = Quat::identity();
+    ///
+    /// q.rotate(1.0, Vec3::new(1.0, 2.0, 3.0));
+    ///
+    /// assert_eq!(q, (0.12813187, 0.25626373, 0.38439557, 0.87758255).into());
+    /// ```
+    pub fn rotate(&mut self, radians: f32, axis: Vec3<f32>) {
+        *self = *self * Quat::rotation(radians, axis);
     }
 
+    /// Calculates the squared length/magnitude/norm of a `Quat`.
+    /// This saves an expensive square root calculation compared to calculating the actual length,
+    /// and comparing two squared lengths can therefore often be cheaper than, and yield the same
+    /// result as, computing two real lengths.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Quat;
+    ///
+    /// let q: Quat = (1.0, 2.0, 3.0, 4.0).into();
+    ///
+    /// assert_eq!(q.length_squared(), 30.0);
     pub fn length_squared(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
     }
 
+    /// Calculates the real length/magnitude/norm of a `Quat`.
+    /// This results in an expensive square root calculation, and you might want to consider using
+    /// a squared length instead when possible.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Quat;
+    ///
+    /// let q: Quat = (1.0, 4.0, 4.0, 16.0).into();
+    ///
+    /// assert_eq!(q.length(), 17.0);
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
 
+    /// Calculates and returns the unit quaternion representation of a `Quat`.
+    /// This results in an an expensive square root calculation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Quat;
+    ///
+    /// let q: Quat = (1.0, 2.0, 2.0, 4.0).into();
+    ///
+    /// assert_eq!(q.normalized(), (0.2, 0.4, 0.4, 0.8).into());
     pub fn normalized(&self) -> Quat {
         let f = 1.0 / self.length();
 
@@ -55,10 +144,38 @@ impl Quat {
         }
     }
 
+    /// Normalizes a `Quat` into its unit quaternion representation.
+    /// This results in an an expensive square root calculation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Quat;
+    ///
+    /// let mut q: Quat = (1.0, 2.0, 2.0, 4.0).into();
+    ///
+    /// q.normalize();
+    ///
+    /// assert_eq!(q, (0.2, 0.4, 0.4, 0.8).into());
     pub fn normalize(&mut self) {
         *self = self.normalized();
     }
 
+    /// Calculates and returns a `Mat4` object representing the rotation of the calling `Quat`
+    /// object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Vec3, Mat4, Quat};
+    ///
+    /// let q = Quat::rotation(1.0, Vec3::new(1.0, 2.0, 3.0));
+    ///
+    /// assert_eq!(q.extract_matrix(), (( 0.5731379,  0.74034876, -0.35127854, 0.0),
+    ///                                 (-0.6090066,  0.67164457,  0.42190588, 0.0),
+    ///                                 ( 0.5482918, -0.027879298, 0.8358222,  0.0),
+    ///                                 ( 0.0,        0.0,         0.0,        1.0)).into());
+    /// ```
     pub fn extract_matrix(&self) -> Mat4 {
         let mut result = Mat4::identity();;
         let x = self.x;

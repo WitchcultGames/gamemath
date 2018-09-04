@@ -132,7 +132,7 @@ impl Vec2<f32> {
         }
     }
 
-    /// Normalizes a Vec2<f32> into its unit vector representation.
+    /// Normalizes a `Vec2<f32>` into its unit vector representation.
     /// This results in an an expensive square root calculation.
     ///
     /// # Examples
@@ -191,7 +191,7 @@ impl Vec2<f64> {
         }
     }
 
-    /// Normalizes a Vec2<f32> into its unit vector representation.
+    /// Normalizes a `Vec2<f32>` into its unit vector representation.
     /// This results in an an expensive square root calculation.
     ///
     /// # Examples

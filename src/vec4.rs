@@ -146,7 +146,7 @@ impl Vec4<f32> {
         }
     }
 
-    /// Normalizes a Vec4<f32> into its unit vector representation.
+    /// Normalizes a `Vec4<f32>` into its unit vector representation.
     /// This results in an an expensive square root calculation.
     ///
     /// # Examples
@@ -207,7 +207,7 @@ impl Vec4<f64> {
         }
     }
 
-    /// Normalizes a Vec4<f64> into its unit vector representation.
+    /// Normalizes a `Vec4<f64>` into its unit vector representation.
     /// This results in an an expensive square root calculation.
     ///
     /// # Examples

@@ -1,8 +1,8 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Neg, Index, IndexMut};
+use quat::Quat;
 use std::fmt::Debug;
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign};
 use vec2::Vec2;
 use vec3::Vec3;
-//use quat::Quat;
 
 /// A four-component Euclidean vector usefull for linear algebra computation in game development
 /// and 3D rendering.
@@ -19,7 +19,17 @@ pub struct Vec4<T> {
 }
 
 impl<T> Vec4<T>
-    where T: Copy + Debug + PartialEq + Default + Sub<Output = T> + Mul<Output = T> + Add<Output = T>,
+where
+    T: Copy
+        + Debug
+        + PartialEq
+        + Default
+        + Sub<Output = T>
+        + Mul<Output = T>
+        + Add<Output = T>
+        + Sub<Output = T>
+        + Neg<Output = T>
+        + PartialOrd,
 {
     /// Constructs a new `Vec4<T>` from three initial values.
     ///
@@ -35,12 +45,7 @@ impl<T> Vec4<T>
     /// assert_eq!(v.z, 23.0);
     /// assert_eq!(v.w, -7.0);
     pub fn new(x: T, y: T, z: T, w: T) -> Vec4<T> {
-        Vec4 {
-            x,
-            y,
-            z,
-            w,
-        }
+        Vec4 { x, y, z, w }
     }
 
     /// Calculates the dot/scalar product of two `Vec4<T>`s.
@@ -100,6 +105,43 @@ impl<T> Vec4<T>
     /// assert_eq!(v.length_squared(), 30.0);
     pub fn length_squared(&self) -> T {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
+    }
+
+    /// Calculates and returns the manhattan distance between the two points pointed to by two
+    /// `Vec4<T>` objects.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Vec4;
+    ///
+    /// let v1 = Vec4::new(1.0, 2.0, 3.0, 4.0);
+    /// let v2 = Vec4::new(2.0, 4.0, 6.0, 8.0);
+    ///
+    /// assert_eq!(v1.manhattan_distance(v2), 10.0);
+    pub fn manhattan_distance(&self, right: Vec4<T>) -> T {
+        let mut a = self.x - right.x;
+        let mut b = self.y - right.y;
+        let mut c = self.z - right.z;
+        let mut d = self.w - right.w;
+
+        if a < T::default() {
+            a = -a;
+        }
+
+        if b < T::default() {
+            b = -b;
+        }
+
+        if c < T::default() {
+            c = -c;
+        }
+
+        if d < T::default() {
+            d = -d;
+        }
+
+        a + b + c + d
     }
 }
 
@@ -237,7 +279,7 @@ impl<T: Default> Default for Vec4<T> {
 }
 
 impl<T> From<(T, T, T, T)> for Vec4<T> {
-    fn from(tuple: (T, T, T, T)) -> Vec4<T>{
+    fn from(tuple: (T, T, T, T)) -> Vec4<T> {
         Vec4 {
             x: tuple.0,
             y: tuple.1,
@@ -280,16 +322,16 @@ impl<T: Default> From<Vec3<T>> for Vec4<T> {
     }
 }
 
-//impl From<Quat> for Vec4 {
-//    fn from(quat: Quat) -> Vec4 {
-//        Vec4 {
-//            x: quat.x,
-//            y: quat.y,
-//            z: quat.z,
-//            w: quat.w,
-//        }
-//    }
-//}
+impl From<Quat> for Vec4<f32> {
+    fn from(quat: Quat) -> Vec4<f32> {
+        Vec4 {
+            x: quat.x,
+            y: quat.y,
+            z: quat.z,
+            w: quat.w,
+        }
+    }
+}
 
 impl<T: Copy> From<T> for Vec4<T> {
     fn from(value: T) -> Vec4<T> {

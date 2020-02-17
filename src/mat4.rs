@@ -1,11 +1,31 @@
+use quat::Quat;
 use std;
+use std::f32::consts::PI;
 use vec3::Vec3;
 use vec4::Vec4;
-use quat::Quat;
-use std::f32::consts::PI;
 
 // TODO: Consider making Mat4 of a generic type instead of forcing f32.
-//       But would any other type than maby f64 even be usefull?
+//       But would any other type than f64 ever be usefull?
+
+type Row = (f32, f32, f32, f32);
+type InlineMat4 = (
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+    f32,
+);
 
 /// A 4x4-component Euclidean matrix usefull for linear algebra computation in game development
 /// and 3D rendering.
@@ -112,10 +132,13 @@ impl Mat4 {
         let right = up.normalized().cross(forward).normalized();
         let up = forward.cross(right).normalized();
 
-        ((right.x, right.y, right.z, 0.0),
-         (up.x, up.y, up.z, 0.0),
-         (forward.x, forward.y, forward.z, 0.0),
-         (eye.x, eye.y, eye.z, 1.0)).into()
+        (
+            (right.x, right.y, right.z, 0.0),
+            (up.x, up.y, up.z, 0.0),
+            (forward.x, forward.y, forward.z, 0.0),
+            (eye.x, eye.y, eye.z, 1.0),
+        )
+            .into()
     }
 
     /// Constructs a 4x4 perspective-orthogonal matrix from a top, left, right, bottom, near and far value.
@@ -277,10 +300,13 @@ impl Mat4 {
     ///                             ( 3.0,  7.0, 11.0, 15.0)).into());
     /// ```
     pub fn transposed(&self) -> Mat4 {
-        ((self[0][0], self[1][0], self[2][0], self[3][0]),
-         (self[0][1], self[1][1], self[2][1], self[3][1]),
-         (self[0][2], self[1][2], self[2][2], self[3][2]),
-         (self[0][3], self[1][3], self[2][3], self[3][3])).into()
+        (
+            (self[0][0], self[1][0], self[2][0], self[3][0]),
+            (self[0][1], self[1][1], self[2][1], self[3][1]),
+            (self[0][2], self[1][2], self[2][2], self[3][2]),
+            (self[0][3], self[1][3], self[2][3], self[3][3]),
+        )
+            .into()
     }
 
     /// Performs a transpose operation on the calling `Mat4` object.
@@ -320,30 +346,30 @@ impl Mat4 {
     /// assert_eq!(m.determinant(), 1.0);
     /// ```
     pub fn determinant(&self) -> f32 {
-        self[3][0] * self[2][1] * self[1][2] * self[0][3] -
-        self[2][0] * self[3][1] * self[1][2] * self[0][3] -
-        self[3][0] * self[1][1] * self[2][2] * self[0][3] +
-        self[1][0] * self[3][1] * self[2][2] * self[0][3] +
-        self[2][0] * self[1][1] * self[3][2] * self[0][3] -
-        self[1][0] * self[2][1] * self[3][2] * self[0][3] -
-        self[3][0] * self[2][1] * self[0][2] * self[1][3] +
-        self[2][0] * self[3][1] * self[0][2] * self[1][3] +
-        self[3][0] * self[0][1] * self[2][2] * self[1][3] -
-        self[0][0] * self[3][1] * self[2][2] * self[1][3] -
-        self[2][0] * self[0][1] * self[3][2] * self[1][3] +
-        self[0][0] * self[2][1] * self[3][2] * self[1][3] +
-        self[3][0] * self[1][1] * self[0][2] * self[2][3] -
-        self[1][0] * self[3][1] * self[0][2] * self[2][3] -
-        self[3][0] * self[0][1] * self[1][2] * self[2][3] +
-        self[0][0] * self[3][1] * self[1][2] * self[2][3] +
-        self[1][0] * self[0][1] * self[3][2] * self[2][3] -
-        self[0][0] * self[1][1] * self[3][2] * self[2][3] -
-        self[2][0] * self[1][1] * self[0][2] * self[3][3] +
-        self[1][0] * self[2][1] * self[0][2] * self[3][3] +
-        self[2][0] * self[0][1] * self[1][2] * self[3][3] -
-        self[0][0] * self[2][1] * self[1][2] * self[3][3] -
-        self[1][0] * self[0][1] * self[2][2] * self[3][3] +
-        self[0][0] * self[1][1] * self[2][2] * self[3][3]
+        self[3][0] * self[2][1] * self[1][2] * self[0][3]
+            - self[2][0] * self[3][1] * self[1][2] * self[0][3]
+            - self[3][0] * self[1][1] * self[2][2] * self[0][3]
+            + self[1][0] * self[3][1] * self[2][2] * self[0][3]
+            + self[2][0] * self[1][1] * self[3][2] * self[0][3]
+            - self[1][0] * self[2][1] * self[3][2] * self[0][3]
+            - self[3][0] * self[2][1] * self[0][2] * self[1][3]
+            + self[2][0] * self[3][1] * self[0][2] * self[1][3]
+            + self[3][0] * self[0][1] * self[2][2] * self[1][3]
+            - self[0][0] * self[3][1] * self[2][2] * self[1][3]
+            - self[2][0] * self[0][1] * self[3][2] * self[1][3]
+            + self[0][0] * self[2][1] * self[3][2] * self[1][3]
+            + self[3][0] * self[1][1] * self[0][2] * self[2][3]
+            - self[1][0] * self[3][1] * self[0][2] * self[2][3]
+            - self[3][0] * self[0][1] * self[1][2] * self[2][3]
+            + self[0][0] * self[3][1] * self[1][2] * self[2][3]
+            + self[1][0] * self[0][1] * self[3][2] * self[2][3]
+            - self[0][0] * self[1][1] * self[3][2] * self[2][3]
+            - self[2][0] * self[1][1] * self[0][2] * self[3][3]
+            + self[1][0] * self[2][1] * self[0][2] * self[3][3]
+            + self[2][0] * self[0][1] * self[1][2] * self[3][3]
+            - self[0][0] * self[2][1] * self[1][2] * self[3][3]
+            - self[1][0] * self[0][1] * self[2][2] * self[3][3]
+            + self[0][0] * self[1][1] * self[2][2] * self[3][3]
     }
 
     /// calculates and returns the adjoint matrix of the calling `Mat4` object.
@@ -366,54 +392,54 @@ impl Mat4 {
     pub fn adjointed(&self) -> Mat4 {
         let mut result: Mat4 = 0.0.into();
 
-        result[0][0] =   self[1][1] * (self[2][2] * self[3][3] - self[2][3] * self[3][2]) -
-                         self[2][1] * (self[1][2] * self[3][3] - self[1][3] * self[3][2]) +
-                         self[3][1] * (self[1][2] * self[2][3] - self[1][3] * self[2][2]);
-        result[0][1] = -(self[0][1] * (self[2][2] * self[3][3] - self[2][3] * self[3][2]) -
-                         self[2][1] * (self[0][2] * self[3][3] - self[0][3] * self[3][2]) +
-                         self[3][1] * (self[0][2] * self[2][3] - self[0][3] * self[2][2]));
-        result[0][2] =   self[0][1] * (self[1][2] * self[3][3] - self[1][3] * self[3][2]) -
-                         self[1][1] * (self[0][2] * self[3][3] - self[0][3] * self[3][2]) +
-                         self[3][1] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]);
-        result[0][3] = -(self[0][1] * (self[1][2] * self[2][3] - self[1][3] * self[2][2]) -
-                         self[1][1] * (self[0][2] * self[2][3] - self[0][3] * self[2][2]) +
-                         self[2][1] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]));
-        result[1][0] = -(self[1][0] * (self[2][2] * self[3][3] - self[2][3] * self[3][2]) -
-                         self[2][0] * (self[1][2] * self[3][3] - self[1][3] * self[3][2]) +
-                         self[3][0] * (self[1][2] * self[2][3] - self[1][3] * self[2][2]));
-        result[1][1] =   self[0][0] * (self[2][2] * self[3][3] - self[2][3] * self[3][2]) -
-                         self[2][0] * (self[0][2] * self[3][3] - self[0][3] * self[3][2]) +
-                         self[3][0] * (self[0][2] * self[2][3] - self[0][3] * self[2][2]);
-        result[1][2] = -(self[0][0] * (self[1][2] * self[3][3] - self[1][3] * self[3][2]) -
-                         self[1][0] * (self[0][2] * self[3][3] - self[0][3] * self[3][2]) +
-                         self[3][0] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]));
-        result[1][3] =   self[0][0] * (self[1][2] * self[2][3] - self[1][3] * self[2][2]) -
-                         self[1][0] * (self[0][2] * self[2][3] - self[0][3] * self[2][2]) +
-                         self[2][0] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]);
-        result[2][0] =   self[1][0] * (self[2][1] * self[3][3] - self[2][3] * self[3][1]) -
-                         self[2][0] * (self[1][1] * self[3][3] - self[1][3] * self[3][1]) +
-                         self[3][0] * (self[1][1] * self[2][3] - self[1][3] * self[2][1]);
-        result[2][1] = -(self[0][0] * (self[2][1] * self[3][3] - self[2][3] * self[3][1]) -
-                         self[2][0] * (self[0][1] * self[3][3] - self[0][3] * self[3][1]) +
-                         self[3][0] * (self[0][1] * self[2][3] - self[0][3] * self[2][1]));
-        result[2][2] =   self[0][0] * (self[1][1] * self[3][3] - self[1][3] * self[3][1]) -
-                         self[1][0] * (self[0][1] * self[3][3] - self[0][3] * self[3][1]) +
-                         self[3][0] * (self[0][1] * self[1][3] - self[0][3] * self[1][1]);
-        result[2][3] = -(self[0][0] * (self[1][1] * self[2][3] - self[1][3] * self[2][1]) -
-                         self[1][0] * (self[0][1] * self[2][3] - self[0][3] * self[2][1]) +
-                         self[2][0] * (self[0][1] * self[1][3] - self[0][3] * self[1][1]));
-        result[3][0] = -(self[1][0] * (self[2][1] * self[3][2] - self[2][2] * self[3][1]) -
-                         self[2][0] * (self[1][1] * self[3][2] - self[1][2] * self[3][1]) +
-                         self[3][0] * (self[1][1] * self[2][2] - self[1][2] * self[2][1]));
-        result[3][1] =   self[0][0] * (self[2][1] * self[3][2] - self[2][2] * self[3][1]) -
-                         self[2][0] * (self[0][1] * self[3][2] - self[0][2] * self[3][1]) +
-                         self[3][0] * (self[0][1] * self[2][2] - self[0][2] * self[2][1]);
-        result[3][2] = -(self[0][0] * (self[1][1] * self[3][2] - self[1][2] * self[3][1]) -
-                         self[1][0] * (self[0][1] * self[3][2] - self[0][2] * self[3][1]) +
-                         self[3][0] * (self[0][1] * self[1][2] - self[0][2] * self[1][1]));
-        result[3][3] =   self[0][0] * (self[1][1] * self[2][2] - self[1][2] * self[2][1]) -
-                         self[1][0] * (self[0][1] * self[2][2] - self[0][2] * self[2][1]) +
-                         self[2][0] * (self[0][1] * self[1][2] - self[0][2] * self[1][1]);
+        result[0][0] = self[1][1] * (self[2][2] * self[3][3] - self[2][3] * self[3][2])
+            - self[2][1] * (self[1][2] * self[3][3] - self[1][3] * self[3][2])
+            + self[3][1] * (self[1][2] * self[2][3] - self[1][3] * self[2][2]);
+        result[0][1] = -(self[0][1] * (self[2][2] * self[3][3] - self[2][3] * self[3][2])
+            - self[2][1] * (self[0][2] * self[3][3] - self[0][3] * self[3][2])
+            + self[3][1] * (self[0][2] * self[2][3] - self[0][3] * self[2][2]));
+        result[0][2] = self[0][1] * (self[1][2] * self[3][3] - self[1][3] * self[3][2])
+            - self[1][1] * (self[0][2] * self[3][3] - self[0][3] * self[3][2])
+            + self[3][1] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]);
+        result[0][3] = -(self[0][1] * (self[1][2] * self[2][3] - self[1][3] * self[2][2])
+            - self[1][1] * (self[0][2] * self[2][3] - self[0][3] * self[2][2])
+            + self[2][1] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]));
+        result[1][0] = -(self[1][0] * (self[2][2] * self[3][3] - self[2][3] * self[3][2])
+            - self[2][0] * (self[1][2] * self[3][3] - self[1][3] * self[3][2])
+            + self[3][0] * (self[1][2] * self[2][3] - self[1][3] * self[2][2]));
+        result[1][1] = self[0][0] * (self[2][2] * self[3][3] - self[2][3] * self[3][2])
+            - self[2][0] * (self[0][2] * self[3][3] - self[0][3] * self[3][2])
+            + self[3][0] * (self[0][2] * self[2][3] - self[0][3] * self[2][2]);
+        result[1][2] = -(self[0][0] * (self[1][2] * self[3][3] - self[1][3] * self[3][2])
+            - self[1][0] * (self[0][2] * self[3][3] - self[0][3] * self[3][2])
+            + self[3][0] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]));
+        result[1][3] = self[0][0] * (self[1][2] * self[2][3] - self[1][3] * self[2][2])
+            - self[1][0] * (self[0][2] * self[2][3] - self[0][3] * self[2][2])
+            + self[2][0] * (self[0][2] * self[1][3] - self[0][3] * self[1][2]);
+        result[2][0] = self[1][0] * (self[2][1] * self[3][3] - self[2][3] * self[3][1])
+            - self[2][0] * (self[1][1] * self[3][3] - self[1][3] * self[3][1])
+            + self[3][0] * (self[1][1] * self[2][3] - self[1][3] * self[2][1]);
+        result[2][1] = -(self[0][0] * (self[2][1] * self[3][3] - self[2][3] * self[3][1])
+            - self[2][0] * (self[0][1] * self[3][3] - self[0][3] * self[3][1])
+            + self[3][0] * (self[0][1] * self[2][3] - self[0][3] * self[2][1]));
+        result[2][2] = self[0][0] * (self[1][1] * self[3][3] - self[1][3] * self[3][1])
+            - self[1][0] * (self[0][1] * self[3][3] - self[0][3] * self[3][1])
+            + self[3][0] * (self[0][1] * self[1][3] - self[0][3] * self[1][1]);
+        result[2][3] = -(self[0][0] * (self[1][1] * self[2][3] - self[1][3] * self[2][1])
+            - self[1][0] * (self[0][1] * self[2][3] - self[0][3] * self[2][1])
+            + self[2][0] * (self[0][1] * self[1][3] - self[0][3] * self[1][1]));
+        result[3][0] = -(self[1][0] * (self[2][1] * self[3][2] - self[2][2] * self[3][1])
+            - self[2][0] * (self[1][1] * self[3][2] - self[1][2] * self[3][1])
+            + self[3][0] * (self[1][1] * self[2][2] - self[1][2] * self[2][1]));
+        result[3][1] = self[0][0] * (self[2][1] * self[3][2] - self[2][2] * self[3][1])
+            - self[2][0] * (self[0][1] * self[3][2] - self[0][2] * self[3][1])
+            + self[3][0] * (self[0][1] * self[2][2] - self[0][2] * self[2][1]);
+        result[3][2] = -(self[0][0] * (self[1][1] * self[3][2] - self[1][2] * self[3][1])
+            - self[1][0] * (self[0][1] * self[3][2] - self[0][2] * self[3][1])
+            + self[3][0] * (self[0][1] * self[1][2] - self[0][2] * self[1][1]));
+        result[3][3] = self[0][0] * (self[1][1] * self[2][2] - self[1][2] * self[2][1])
+            - self[1][0] * (self[0][1] * self[2][2] - self[0][2] * self[2][1])
+            + self[2][0] * (self[0][1] * self[1][2] - self[0][2] * self[1][1]);
 
         result
     }
@@ -509,19 +535,28 @@ impl Mat4 {
         let cos_m1 = 1.0 - cos;
         let axis = axis.normalized();
 
-        ((axis.x * axis.x * cos_m1 + cos,
-          axis.x * axis.y * cos_m1 - axis.z * sin,
-          axis.x * axis.z * cos_m1 + axis.y * sin,
-          0.0),
-         (axis.y * axis.x * cos_m1 + axis.z * sin,
-          axis.y * axis.y * cos_m1 + cos,
-          axis.y * axis.z * cos_m1 - axis.x * sin,
-          0.0),
-         (axis.z * axis.x * cos_m1 - axis.y * sin,
-          axis.z * axis.y * cos_m1 + axis.x * sin,
-          axis.z * axis.z * cos_m1 + cos,
-          0.0),
-         (0.0, 0.0, 0.0, 1.0)).into()
+        (
+            (
+                axis.x * axis.x * cos_m1 + cos,
+                axis.x * axis.y * cos_m1 - axis.z * sin,
+                axis.x * axis.z * cos_m1 + axis.y * sin,
+                0.0,
+            ),
+            (
+                axis.y * axis.x * cos_m1 + axis.z * sin,
+                axis.y * axis.y * cos_m1 + cos,
+                axis.y * axis.z * cos_m1 - axis.x * sin,
+                0.0,
+            ),
+            (
+                axis.z * axis.x * cos_m1 - axis.y * sin,
+                axis.z * axis.y * cos_m1 + axis.x * sin,
+                axis.z * axis.z * cos_m1 + cos,
+                0.0,
+            ),
+            (0.0, 0.0, 0.0, 1.0),
+        )
+            .into()
     }
 
     /// Calculates and returns a `Mat4` object representing the calling `Mat4` object rotated
@@ -626,21 +661,17 @@ impl Mat4 {
     pub fn translated(&self, translation: Vec3<f32>) -> Mat4 {
         let mut result = *self;
 
-        result[3][0] += self[0][0] * translation.x +
-                        self[1][0] * translation.y +
-                        self[2][0] * translation.z;
+        result[3][0] +=
+            self[0][0] * translation.x + self[1][0] * translation.y + self[2][0] * translation.z;
 
-        result[3][1] +=   self[0][1] * translation.x +
-                        self[1][1] * translation.y +
-                        self[2][1] * translation.z;
+        result[3][1] +=
+            self[0][1] * translation.x + self[1][1] * translation.y + self[2][1] * translation.z;
 
-        result[3][2] += self[0][2] * translation.x +
-                        self[1][2] * translation.y +
-                        self[2][2] * translation.z;
+        result[3][2] +=
+            self[0][2] * translation.x + self[1][2] * translation.y + self[2][2] * translation.z;
 
-        result[3][3] += self[0][3] * translation.x +
-                        self[1][3] * translation.y +
-                        self[2][3] * translation.z;
+        result[3][3] +=
+            self[0][3] * translation.x + self[1][3] * translation.y + self[2][3] * translation.z;
 
         result
     }
@@ -669,51 +700,51 @@ impl Mat4 {
 
 impl Default for Mat4 {
     fn default() -> Mat4 {
-        ((1.0, 0.0, 0.0, 0.0),
-         (0.0, 1.0, 0.0, 0.0),
-         (0.0, 0.0, 1.0, 0.0),
-         (0.0, 0.0, 0.0, 1.0)).into()
+        (
+            (1.0, 0.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0, 0.0),
+            (0.0, 0.0, 1.0, 0.0),
+            (0.0, 0.0, 0.0, 1.0),
+        )
+            .into()
     }
 }
 
 impl From<f32> for Mat4 {
     fn from(value: f32) -> Mat4 {
         Mat4 {
-            rows: [(value, 0.0, 0.0, 0.0).into(),
-                   (0.0, value, 0.0, 0.0).into(),
-                   (0.0, 0.0, value, 0.0).into(),
-                   (0.0, 0.0, 0.0, value).into()],
+            rows: [
+                (value, 0.0, 0.0, 0.0).into(),
+                (0.0, value, 0.0, 0.0).into(),
+                (0.0, 0.0, value, 0.0).into(),
+                (0.0, 0.0, 0.0, value).into(),
+            ],
         }
     }
 }
 
-impl From<((f32, f32, f32, f32),
-           (f32, f32, f32, f32),
-           (f32, f32, f32, f32),
-           (f32, f32, f32, f32))> for Mat4 {
-    fn from(tuple: ((f32, f32, f32, f32),
-                    (f32, f32, f32, f32),
-                    (f32, f32, f32, f32),
-                    (f32, f32, f32, f32))) -> Mat4 {
+impl From<(Row, Row, Row, Row)> for Mat4 {
+    fn from(tuple: (Row, Row, Row, Row)) -> Mat4 {
         Mat4 {
-            rows: [tuple.0.into(), tuple.1.into(), tuple.2.into(), tuple.3.into()],
+            rows: [
+                tuple.0.into(),
+                tuple.1.into(),
+                tuple.2.into(),
+                tuple.3.into(),
+            ],
         }
     }
 }
 
-impl From<(f32, f32, f32, f32,
-           f32, f32, f32, f32,
-           f32, f32, f32, f32,
-           f32, f32, f32, f32)> for Mat4 {
-    fn from(tuple: (f32, f32, f32, f32,
-                    f32, f32, f32, f32,
-                    f32, f32, f32, f32,
-                    f32, f32, f32, f32)) -> Mat4 {
+impl From<InlineMat4> for Mat4 {
+    fn from(tuple: InlineMat4) -> Mat4 {
         Mat4 {
-            rows: [(tuple.0, tuple.1, tuple.2, tuple.3).into(),
-                   (tuple.4, tuple.5, tuple.6, tuple.7).into(),
-                   (tuple.8, tuple.9, tuple.10, tuple.11).into(),
-                   (tuple.12, tuple.13, tuple.14, tuple.15).into()],
+            rows: [
+                (tuple.0, tuple.1, tuple.2, tuple.3).into(),
+                (tuple.4, tuple.5, tuple.6, tuple.7).into(),
+                (tuple.8, tuple.9, tuple.10, tuple.11).into(),
+                (tuple.12, tuple.13, tuple.14, tuple.15).into(),
+            ],
         }
     }
 }
@@ -721,7 +752,12 @@ impl From<(f32, f32, f32, f32,
 impl From<[[f32; 4]; 4]> for Mat4 {
     fn from(slice: [[f32; 4]; 4]) -> Mat4 {
         Mat4 {
-            rows: [slice[0].into(), slice[1].into(), slice[2].into(), slice[3].into()],
+            rows: [
+                slice[0].into(),
+                slice[1].into(),
+                slice[2].into(),
+                slice[3].into(),
+            ],
         }
     }
 }
@@ -729,10 +765,12 @@ impl From<[[f32; 4]; 4]> for Mat4 {
 impl From<[f32; 16]> for Mat4 {
     fn from(slice: [f32; 16]) -> Mat4 {
         Mat4 {
-            rows: [(slice[ 0], slice[ 1], slice[ 2], slice[ 3]).into(),
-                   (slice[ 4], slice[ 5], slice[ 6], slice[ 7]).into(),
-                   (slice[ 8], slice[ 9], slice[10], slice[11]).into(),
-                   (slice[12], slice[13], slice[14], slice[15]).into()],
+            rows: [
+                (slice[0], slice[1], slice[2], slice[3]).into(),
+                (slice[4], slice[5], slice[6], slice[7]).into(),
+                (slice[8], slice[9], slice[10], slice[11]).into(),
+                (slice[12], slice[13], slice[14], slice[15]).into(),
+            ],
         }
     }
 }
@@ -804,7 +842,12 @@ impl std::ops::Add for Mat4 {
 
     fn add(self, right: Mat4) -> Mat4 {
         Mat4 {
-            rows: [self[0] + right[0], self[1] + right[1], self[2] + right[2], self[3] + right[3]],
+            rows: [
+                self[0] + right[0],
+                self[1] + right[1],
+                self[2] + right[2],
+                self[3] + right[3],
+            ],
         }
     }
 }
@@ -820,7 +863,12 @@ impl std::ops::Sub for Mat4 {
 
     fn sub(self, right: Mat4) -> Mat4 {
         Mat4 {
-            rows: [self[0] - right[0], self[1] - right[1], self[2] - right[2], self[3] - right[3]],
+            rows: [
+                self[0] - right[0],
+                self[1] - right[1],
+                self[2] - right[2],
+                self[3] - right[3],
+            ],
         }
     }
 }
@@ -835,10 +883,13 @@ impl std::ops::Mul<Vec4<f32>> for Mat4 {
     type Output = Vec4<f32>;
 
     fn mul(self, vec: Vec4<f32>) -> Vec4<f32> {
-        (self[0].dot(vec),
-         self[1].dot(vec),
-         self[2].dot(vec),
-         self[3].dot(vec)).into()
+        (
+            self[0].dot(vec),
+            self[1].dot(vec),
+            self[2].dot(vec),
+            self[3].dot(vec),
+        )
+            .into()
     }
 }
 
@@ -848,73 +899,73 @@ impl std::ops::Mul<Mat4> for Mat4 {
     fn mul(self, right: Mat4) -> Mat4 {
         let mut result: Mat4 = 0.0.into();
 
-        result[0][0] = self[0][0] * right[0][0] +
-                     self[0][1] * right[1][0] +
-                     self[0][2] * right[2][0] +
-                     self[0][3] * right[3][0];
-        result[0][1] = self[0][0] * right[0][1] +
-                     self[0][1] * right[1][1] +
-                     self[0][2] * right[2][1] +
-                     self[0][3] * right[3][1];
-        result[0][2] = self[0][0] * right[0][2] +
-                     self[0][1] * right[1][2] +
-                     self[0][2] * right[2][2] +
-                     self[0][3] * right[3][2];
-        result[0][3] = self[0][0] * right[0][3] +
-                     self[0][1] * right[1][3] +
-                     self[0][2] * right[2][3] +
-                     self[0][3] * right[3][3];
+        result[0][0] = self[0][0] * right[0][0]
+            + self[0][1] * right[1][0]
+            + self[0][2] * right[2][0]
+            + self[0][3] * right[3][0];
+        result[0][1] = self[0][0] * right[0][1]
+            + self[0][1] * right[1][1]
+            + self[0][2] * right[2][1]
+            + self[0][3] * right[3][1];
+        result[0][2] = self[0][0] * right[0][2]
+            + self[0][1] * right[1][2]
+            + self[0][2] * right[2][2]
+            + self[0][3] * right[3][2];
+        result[0][3] = self[0][0] * right[0][3]
+            + self[0][1] * right[1][3]
+            + self[0][2] * right[2][3]
+            + self[0][3] * right[3][3];
 
-        result[1][0] = self[1][0] * right[0][0] +
-                     self[1][1] * right[1][0] +
-                     self[1][2] * right[2][0] +
-                     self[1][3] * right[3][0];
-        result[1][1] = self[1][0] * right[0][1] +
-                     self[1][1] * right[1][1] +
-                     self[1][2] * right[2][1] +
-                     self[1][3] * right[3][1];
-        result[1][2] = self[1][0] * right[0][2] +
-                     self[1][1] * right[1][2] +
-                     self[1][2] * right[2][2] +
-                     self[1][3] * right[3][2];
-        result[1][3] = self[1][0] * right[0][3] +
-                     self[1][1] * right[1][3] +
-                     self[1][2] * right[2][3] +
-                     self[1][3] * right[3][3];
+        result[1][0] = self[1][0] * right[0][0]
+            + self[1][1] * right[1][0]
+            + self[1][2] * right[2][0]
+            + self[1][3] * right[3][0];
+        result[1][1] = self[1][0] * right[0][1]
+            + self[1][1] * right[1][1]
+            + self[1][2] * right[2][1]
+            + self[1][3] * right[3][1];
+        result[1][2] = self[1][0] * right[0][2]
+            + self[1][1] * right[1][2]
+            + self[1][2] * right[2][2]
+            + self[1][3] * right[3][2];
+        result[1][3] = self[1][0] * right[0][3]
+            + self[1][1] * right[1][3]
+            + self[1][2] * right[2][3]
+            + self[1][3] * right[3][3];
 
-        result[2][0] = self[2][0] * right[0][0] +
-                     self[2][1] * right[1][0] +
-                     self[2][2] * right[2][0] +
-                     self[2][3] * right[3][0];
-        result[2][1] = self[2][0] * right[0][1] +
-                     self[2][1] * right[1][1] +
-                     self[2][2] * right[2][1] +
-                     self[2][3] * right[3][1];
-        result[2][2] = self[2][0] * right[0][2] +
-                     self[2][1] * right[1][2] +
-                     self[2][2] * right[2][2] +
-                     self[2][3] * right[3][2];
-        result[2][3] = self[2][0] * right[0][3] +
-                     self[2][1] * right[1][3] +
-                     self[2][2] * right[2][3] +
-                     self[2][3] * right[3][3];
+        result[2][0] = self[2][0] * right[0][0]
+            + self[2][1] * right[1][0]
+            + self[2][2] * right[2][0]
+            + self[2][3] * right[3][0];
+        result[2][1] = self[2][0] * right[0][1]
+            + self[2][1] * right[1][1]
+            + self[2][2] * right[2][1]
+            + self[2][3] * right[3][1];
+        result[2][2] = self[2][0] * right[0][2]
+            + self[2][1] * right[1][2]
+            + self[2][2] * right[2][2]
+            + self[2][3] * right[3][2];
+        result[2][3] = self[2][0] * right[0][3]
+            + self[2][1] * right[1][3]
+            + self[2][2] * right[2][3]
+            + self[2][3] * right[3][3];
 
-        result[3][0] = self[3][0] * right[0][0] +
-                     self[3][1] * right[1][0] +
-                     self[3][2] * right[2][0] +
-                     self[3][3] * right[3][0];
-        result[3][1] = self[3][0] * right[0][1] +
-                     self[3][1] * right[1][1] +
-                     self[3][2] * right[2][1] +
-                     self[3][3] * right[3][1];
-        result[3][2] = self[3][0] * right[0][2] +
-                     self[3][1] * right[1][2] +
-                     self[3][2] * right[2][2] +
-                     self[3][3] * right[3][2];
-        result[3][3] = self[3][0] * right[0][3] +
-                     self[3][1] * right[1][3] +
-                     self[3][2] * right[2][3] +
-                     self[3][3] * right[3][3];
+        result[3][0] = self[3][0] * right[0][0]
+            + self[3][1] * right[1][0]
+            + self[3][2] * right[2][0]
+            + self[3][3] * right[3][0];
+        result[3][1] = self[3][0] * right[0][1]
+            + self[3][1] * right[1][1]
+            + self[3][2] * right[2][1]
+            + self[3][3] * right[3][1];
+        result[3][2] = self[3][0] * right[0][2]
+            + self[3][1] * right[1][2]
+            + self[3][2] * right[2][2]
+            + self[3][3] * right[3][2];
+        result[3][3] = self[3][0] * right[0][3]
+            + self[3][1] * right[1][3]
+            + self[3][2] * right[2][3]
+            + self[3][3] * right[3][3];
 
         result
     }

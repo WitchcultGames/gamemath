@@ -3,7 +3,8 @@ use std::ops::{Index, IndexMut};
 /// A heap allocated structure for representing a value curve.
 pub struct Curve<T>(Vec<T>);
 
-impl<T> Curve<T> where
+impl<T> Curve<T>
+where
     T: Default + Clone + Copy + From<f32> + Into<f32>,
 {
     /// Constructs a `Curve` from a slice of values.
@@ -21,9 +22,7 @@ impl<T> Curve<T> where
     /// assert_eq!(c[3], 0.0);
     /// ```
     pub fn new(values: &[T]) -> Curve<T> {
-        Curve {
-            0: values.into(),
-        }
+        Curve { 0: values.into() }
     }
 
     /// Linearly interpolates between the values of the curve by a factor.
@@ -40,23 +39,22 @@ impl<T> Curve<T> where
     pub fn lerp(&self, factor: f32) -> T {
         let len = self.0.len();
 
-        if len > 1 {
-            if factor < 1.0 {
-                let factor_scaled = factor * (len - 1) as f32;
-                let start = self.0[factor_scaled as usize];
-                let end = self.0[(factor_scaled + 1.0) as usize];
-                let new_factor = factor_scaled - (factor_scaled as u32) as f32;
-                let factor_clamped = 0.0_f32.max(1.0_f32.min(new_factor));
+        match len {
+            0 => T::default(),
+            1 => self.0[0],
+            _ => {
+                if factor < 1.0 {
+                    let factor_scaled = factor * (len - 1) as f32;
+                    let start = self.0[factor_scaled as usize];
+                    let end = self.0[(factor_scaled + 1.0) as usize];
+                    let new_factor = factor_scaled - (factor_scaled as u32) as f32;
+                    let factor_clamped = 0.0_f32.max(1.0_f32.min(new_factor));
 
-                ((1.0 - factor_clamped) * start.into() + factor_clamped * end.into()).into()
-
-            } else {
-                self.0[len - 1]
+                    ((1.0 - factor_clamped) * start.into() + factor_clamped * end.into()).into()
+                } else {
+                    self.0[len - 1]
+                }
             }
-        } else if len == 1 {
-            self.0[0]
-        } else {
-            T::default()
         }
     }
 }

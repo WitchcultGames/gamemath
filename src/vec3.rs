@@ -1,5 +1,5 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Neg, Index, IndexMut};
 use std::fmt::Debug;
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign};
 use vec2::Vec2;
 use vec4::Vec4;
 
@@ -16,7 +16,17 @@ pub struct Vec3<T> {
 }
 
 impl<T> Vec3<T>
-    where T: Copy + Debug + PartialEq + Default + Sub<Output = T> + Mul<Output = T> + Add<Output = T>,
+where
+    T: Copy
+        + Debug
+        + PartialEq
+        + Default
+        + Sub<Output = T>
+        + Mul<Output = T>
+        + Add<Output = T>
+        + Sub<Output = T>
+        + Neg<Output = T>
+        + PartialOrd,
 {
     /// Constructs a new `Vec3<T>` from three initial values.
     ///
@@ -31,11 +41,7 @@ impl<T> Vec3<T>
     /// assert_eq!(v.y, 5.0);
     /// assert_eq!(v.z, 23.0);
     pub fn new(x: T, y: T, z: T) -> Vec3<T> {
-        Vec3 {
-            x,
-            y,
-            z,
-        }
+        Vec3 { x, y, z }
     }
 
     /// Calculates the dot/scalar product of two `Vec3<T>`s.
@@ -118,6 +124,38 @@ impl<T> Vec3<T>
     /// assert_eq!(v.length_squared(), 14.0);
     pub fn length_squared(&self) -> T {
         self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    /// Calculates and returns the manhattan distance between the two points pointed to by two
+    /// `Vec3<T>` objects.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Vec3;
+    ///
+    /// let v1 = Vec3::new(1.0, 2.0, 3.0);
+    /// let v2 = Vec3::new(2.0, 4.0, 6.0);
+    ///
+    /// assert_eq!(v1.manhattan_distance(v2), 6.0);
+    pub fn manhattan_distance(&self, right: Vec3<T>) -> T {
+        let mut a = self.x - right.x;
+        let mut b = self.y - right.y;
+        let mut c = self.z - right.z;
+
+        if a < T::default() {
+            a = -a;
+        }
+
+        if b < T::default() {
+            b = -b;
+        }
+
+        if c < T::default() {
+            c = -c;
+        }
+
+        a + b + c
     }
 }
 

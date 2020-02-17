@@ -1,5 +1,5 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Neg, Index, IndexMut};
 use std::fmt::Debug;
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign};
 use vec3::Vec3;
 use vec4::Vec4;
 
@@ -14,7 +14,16 @@ pub struct Vec2<T> {
 }
 
 impl<T> Vec2<T>
-    where T: Copy + Debug + PartialEq + Default + Mul<Output = T> + Add<Output = T>,
+where
+    T: Copy
+        + Debug
+        + PartialEq
+        + Default
+        + Mul<Output = T>
+        + Add<Output = T>
+        + Sub<Output = T>
+        + Neg<Output = T>
+        + PartialOrd,
 {
     /// Constructs a new `Vec2<T>` from two initial values.
     ///
@@ -28,10 +37,7 @@ impl<T> Vec2<T>
     /// assert_eq!(v.x, 1.0);
     /// assert_eq!(v.y, 5.0);
     pub fn new(x: T, y: T) -> Vec2<T> {
-        Vec2 {
-            x,
-            y,
-        }
+        Vec2 { x, y }
     }
 
     /// Calculates the dot/scalar product of two `Vec2<T>`s.
@@ -89,6 +95,33 @@ impl<T> Vec2<T>
     pub fn length_squared(&self) -> T {
         self.x * self.x + self.y * self.y
     }
+
+    /// Calculates and returns the manhattan distance between the two points pointed to by two
+    /// `Vec2<T>` objects.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::Vec2;
+    ///
+    /// let v1 = Vec2::new(1.0, 2.0);
+    /// let v2 = Vec2::new(2.0, 4.0);
+    ///
+    /// assert_eq!(v1.manhattan_distance(v2), 3.0);
+    pub fn manhattan_distance(&self, right: Vec2<T>) -> T {
+        let mut a = self.x - right.x;
+        let mut b = self.y - right.y;
+
+        if a < T::default() {
+            a = -a;
+        }
+
+        if b < T::default() {
+            b = -b;
+        }
+
+        a + b
+    }
 }
 
 impl Vec2<f32> {
@@ -104,7 +137,7 @@ impl Vec2<f32> {
     /// let v = Vec2::new(3.0_f32, 4.0_f32);
     ///
     /// assert_eq!(v.length(), 5.0_f32);
-    pub fn length(&self) -> f32 {
+    pub fn length(self) -> f32 {
         self.length_squared().sqrt()
     }
 
@@ -119,7 +152,7 @@ impl Vec2<f32> {
     /// let v = Vec2::new(3.0_f32, 4.0_f32);
     ///
     /// assert_eq!(v.normalized(), Vec2::new(0.6_f32, 0.8_f32));
-    pub fn normalized(&self) -> Vec2<f32> {
+    pub fn normalized(self) -> Vec2<f32> {
         let mut length = self.length();
 
         if length == 0.0 {
@@ -210,7 +243,8 @@ impl Vec2<f64> {
 }
 
 impl<T> Default for Vec2<T>
-    where T: Default,
+where
+    T: Default,
 {
     fn default() -> Vec2<T> {
         Vec2 {
@@ -258,10 +292,7 @@ impl<T> From<Vec4<T>> for Vec2<T> {
 
 impl<T: Copy> From<T> for Vec2<T> {
     fn from(value: T) -> Vec2<T> {
-        Vec2 {
-            x: value,
-            y: value,
-        }
+        Vec2 { x: value, y: value }
     }
 }
 

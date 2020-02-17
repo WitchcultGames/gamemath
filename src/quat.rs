@@ -1,18 +1,18 @@
-use vec3::Vec3;
-use vec4::Vec4;
 use mat4::Mat4;
 use std::ops::{Add, AddAssign, Mul, MulAssign};
+use vec3::Vec3;
+use vec4::Vec4;
 
 /// A quaternion data type used for representing spatial rotation in a 3D enviornment.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Quat {
     /// The X/first component of the quaternion.
     pub x: f32,
-    /// The Y/first component of the quaternion.
+    /// The Y/second component of the quaternion.
     pub y: f32,
-    /// The Z/first component of the quaternion.
+    /// The Z/third component of the quaternion.
     pub z: f32,
-    /// The W/first component of the quaternion.
+    /// The W/fourth component of the quaternion.
     pub w: f32,
 }
 
@@ -86,7 +86,7 @@ impl Quat {
     /// assert_eq!(q, (0.12813187, 0.25626373, 0.38439557, 0.87758255).into());
     /// ```
     pub fn rotate(&mut self, radians: f32, axis: Vec3<f32>) {
-        *self = *self * Quat::rotation(radians, axis);
+        *self *= Quat::rotation(radians, axis);
     }
 
     /// Calculates the squared length/magnitude/norm of a `Quat`.
@@ -177,7 +177,7 @@ impl Quat {
     ///                                 ( 0.0,        0.0,         0.0,        1.0)).into());
     /// ```
     pub fn extract_matrix(&self) -> Mat4 {
-        let mut result = Mat4::identity();;
+        let mut result = Mat4::identity();
         let x = self.x;
         let y = self.y;
         let z = self.z;

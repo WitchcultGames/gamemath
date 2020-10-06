@@ -3,12 +3,12 @@ use vec2::Vec2;
 use vec3::Vec3;
 
 // TODO: Consider making Mat3 of a generic type instead of forcing f32.
-//       But would any other type than f64 ever be usefull?
+//       But would any other type than f64 ever be useful?
 
 type Row = (f32, f32, f32);
 type InlineMat3 = (f32, f32, f32, f32, f32, f32, f32, f32, f32);
 
-/// A 3x3-component Euclidean matrix usefull for linear algebra computation in game development
+/// A 3x3-component Euclidean matrix useful for linear algebra computation in game development
 /// and 2D rendering.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Mat3 {

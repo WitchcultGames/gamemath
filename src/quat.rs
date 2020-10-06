@@ -3,7 +3,7 @@ use std::ops::{Add, AddAssign, Mul, MulAssign};
 use vec3::Vec3;
 use vec4::Vec4;
 
-/// A quaternion data type used for representing spatial rotation in a 3D enviornment.
+/// A quaternion data type used for representing spatial rotation in a 3D environment.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Quat {
     /// The X/first component of the quaternion.

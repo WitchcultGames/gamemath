@@ -3,7 +3,7 @@ use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAss
 use vec3::Vec3;
 use vec4::Vec4;
 
-/// A two-component Euclidean vector usefull for linear algebra computation in game development
+/// A two-component Euclidean vector useful for linear algebra computation in game development
 /// and 3D rendering.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec2<T> {
@@ -81,7 +81,7 @@ where
     /// and comparing two squared lengths can therefore often be cheaper than, and yield the same
     /// result as, computing two real lengths.
     ///
-    /// Also usefull for data types that does not implement a square root function, i.e.
+    /// Also useful for data types that does not implement a square root function, i.e.
     /// non-floating-point data types.
     ///
     /// # Examples

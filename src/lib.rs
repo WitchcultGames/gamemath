@@ -2,6 +2,7 @@
 //! general game development.
 
 mod curve;
+mod mat2;
 mod mat3;
 mod mat4;
 mod quat;
@@ -10,6 +11,7 @@ mod vec3;
 mod vec4;
 
 pub use self::curve::Curve;
+pub use self::mat2::Mat2;
 pub use self::mat3::Mat3;
 pub use self::mat4::Mat4;
 pub use self::quat::Quat;

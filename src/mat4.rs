@@ -5,7 +5,7 @@ use vec3::Vec3;
 use vec4::Vec4;
 
 // TODO: Consider making Mat4 of a generic type instead of forcing f32.
-//       But would any other type than f64 ever be usefull?
+//       But would any other type than f64 ever be useful?
 
 type Row = (f32, f32, f32, f32);
 type InlineMat4 = (
@@ -27,7 +27,7 @@ type InlineMat4 = (
     f32,
 );
 
-/// A 4x4-component Euclidean matrix usefull for linear algebra computation in game development
+/// A 4x4-component Euclidean matrix useful for linear algebra computation in game development
 /// and 3D rendering.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Mat4 {

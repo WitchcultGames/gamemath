@@ -161,6 +161,23 @@ impl Mat2 {
     pub fn scale(&mut self, factor: Vec2<f32>) {
         *self = self.scaled(factor);
     }
+
+    /// Returns diagonal of the matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Mat2, Vec2};
+    ///
+    /// let m = Mat2::from((1.0, 2.0, 3.0, 4.0));
+    ///
+    /// let d = m.diagonal();
+    ///
+    /// assert_eq!(d, ((1.0, 4.0)).into());
+    /// ```
+    pub fn diagonal(&self) -> Vec2<f32> {
+        return Vec2 { x: self[0][0], y: self[1][1] };
+    }
 }
 
 impl Default for Mat2 {

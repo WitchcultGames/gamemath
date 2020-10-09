@@ -2,6 +2,7 @@ use std::fmt::Debug;
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign};
 use vec3::Vec3;
 use vec4::Vec4;
+use decomposition::Permute;
 
 /// A two-component Euclidean vector useful for linear algebra computation in game development
 /// and 3D rendering.
@@ -380,5 +381,11 @@ impl<T: Neg<Output = T>> Neg for Vec2<T> {
             x: -self.x,
             y: -self.y,
         }
+    }
+}
+
+impl <T: Copy> Permute for Vec2<T> {
+    fn permuted(self, p: &Vec<usize>) -> Self {
+        Vec2::from((self[p[0]], self[p[1]]))
     }
 }

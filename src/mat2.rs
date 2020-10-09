@@ -1,5 +1,6 @@
 use std;
 use vec2::Vec2;
+use decomposition::{LU, Zero, Dimensional};
 
 type Row = (f32, f32);
 type InlineMat2 = (f32, f32, f32, f32);
@@ -351,4 +352,19 @@ impl std::ops::MulAssign<Mat2> for Mat2 {
     fn mul_assign(&mut self, right: Mat2) {
         *self = *self * right;
     }
+}
+
+impl Dimensional for Mat2 {
+    fn dimension() -> usize {
+        4
+    }
+}
+
+impl Zero for Mat2 {
+    fn zero() -> Mat2 {
+        (0.0).into()
+    }
+}
+
+impl LU<Vec2<f32>> for Mat2 {
 }

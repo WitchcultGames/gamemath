@@ -1,3 +1,4 @@
+use decomposition::{Dimensional, Zero, LU};
 use std;
 use vec2::Vec2;
 use vec3::Vec3;
@@ -223,6 +224,65 @@ impl Mat3 {
     pub fn translate(&mut self, translation: Vec2<f32>) {
         *self = self.translated(translation);
     }
+
+    /// Permutes columns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Mat3};
+    ///
+    /// let mut m = Mat3::identity();
+    /// m[2][1] = 4.0;
+    /// 
+    /// let p = vec![0, 2, 1];
+    /// let a = m.permuted_columns(&p);
+    ///
+    /// assert_eq!(a, ((1.0, 0.0, 0.0),
+    ///                (0.0, 0.0, 1.0),
+    ///                (0.0, 1.0, 4.0)).into());
+    /// ```
+    pub fn permuted_columns(&self, p: &Vec<usize>) -> Mat3 {
+        (
+            (
+                self[0][p[0]],
+                self[0][p[1]],
+                self[0][p[2]],
+            ),
+            (
+                self[1][p[0]],
+                self[1][p[1]],
+                self[1][p[2]],
+            ),
+            (
+                self[2][p[0]],
+                self[2][p[1]],
+                self[2][p[2]],
+            ),
+        )
+            .into()
+    }
+
+    /// Permutes rows.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Mat3};
+    ///
+    /// let mut m = Mat3::identity();
+    /// m[2][1] = 4.0;
+    /// 
+    /// let p = vec![0, 2, 1];
+    /// let a = m.permuted_rows(&p);
+    ///
+    /// assert_eq!(a, ((1.0, 0.0, 0.0),
+    ///                (0.0, 4.0, 1.0),
+    ///                (0.0, 1.0, 0.0)).into());
+    /// ```
+    pub fn permuted_rows(&self, p: &Vec<usize>) -> Mat3 {
+        (self[p[0]], self[p[1]], self[p[2]]).into()
+    }
 }
 
 impl Default for Mat3 {
@@ -413,3 +473,31 @@ impl std::ops::MulAssign<Mat3> for Mat3 {
         *self = *self * right;
     }
 }
+
+
+impl Zero for Mat3 {
+    /// Constructs a 3x3 zero-filled matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gamemath::{Mat3, Vec3, Zero};
+    ///
+    /// let m = Mat3::zero();
+    ///
+    /// assert_eq!(m[0], Vec3::new(0.0, 0.0, 0.0));
+    /// assert_eq!(m[1], Vec3::new(0.0, 0.0, 0.0));
+    /// assert_eq!(m[2], Vec3::new(0.0, 0.0, 0.0));
+    /// ```
+    fn zero() -> Mat3 {
+        (0.0).into()
+    }
+}
+
+impl Dimensional for Mat3 {
+    fn dimension() -> usize {
+        3
+    }
+}
+
+impl LU<Vec3<f32>> for Mat3 {}

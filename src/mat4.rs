@@ -3,6 +3,7 @@ use std;
 use std::f32::consts::PI;
 use vec3::Vec3;
 use vec4::Vec4;
+use decomposition::{LU, Zero, Dimensional};
 
 // TODO: Consider making Mat4 of a generic type instead of forcing f32.
 //       But would any other type than f64 ever be useful?
@@ -975,4 +976,19 @@ impl std::ops::MulAssign<Mat4> for Mat4 {
     fn mul_assign(&mut self, right: Mat4) {
         *self = *self * right;
     }
+}
+
+impl Dimensional for Mat4 {
+    fn dimension() -> usize {
+        4
+    }
+}
+
+impl Zero for Mat4 {
+    fn zero() -> Mat4 {
+        (0.0).into()
+    }
+}
+
+impl LU<Vec4<f32>> for Mat4 {
 }

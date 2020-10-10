@@ -385,7 +385,7 @@ impl<T: Neg<Output = T>> Neg for Vec2<T> {
 }
 
 impl <T: Copy> Permute for Vec2<T> {
-    fn permuted(self, p: &Vec<usize>) -> Self {
+    fn permuted(self, p: &[usize]) -> Self {
         Vec2::from((self[p[0]], self[p[1]]))
     }
 }

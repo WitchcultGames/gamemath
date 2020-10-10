@@ -177,7 +177,7 @@ impl Mat2 {
     /// assert_eq!(d, ((1.0, 4.0)).into());
     /// ```
     pub fn diagonal(&self) -> Vec2<f32> {
-        return Vec2 { x: self[0][0], y: self[1][1] };
+        Vec2 { x: self[0][0], y: self[1][1] }
     }
 }
 

@@ -451,7 +451,7 @@ impl<T: Neg<Output = T>> Neg for Vec4<T> {
 }
 
 impl <T: Copy> Permute for Vec4<T> {
-    fn permuted(self, p: &Vec<usize>) -> Self {
+    fn permuted(self, p: &[usize]) -> Self {
         Vec4::from((self[p[0]], self[p[1]], self[p[2]], self[p[3]]))
     }
 }

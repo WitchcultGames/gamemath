@@ -242,7 +242,7 @@ impl Mat3 {
     ///                (0.0, 0.0, 1.0),
     ///                (0.0, 1.0, 4.0)).into());
     /// ```
-    pub fn permuted_columns(&self, p: &Vec<usize>) -> Mat3 {
+    pub fn permuted_columns(&self, p: &[usize]) -> Mat3 {
         (
             (
                 self[0][p[0]],
@@ -280,7 +280,7 @@ impl Mat3 {
     ///                (0.0, 4.0, 1.0),
     ///                (0.0, 1.0, 0.0)).into());
     /// ```
-    pub fn permuted_rows(&self, p: &Vec<usize>) -> Mat3 {
+    pub fn permuted_rows(&self, p: &[usize]) -> Mat3 {
         (self[p[0]], self[p[1]], self[p[2]]).into()
     }
 }

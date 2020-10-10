@@ -27,9 +27,7 @@ pub trait LU<Vector: IndexMut<usize, Output = f32> + Default + Clone + Permute>:
 
     let y = LU::solve_with_L(&L, b.permuted(&p));
 
-    let x = LU::solve_with_U(&U, y);
-
-    x
+    LU::solve_with_U(&U, y)
   }
 
   /// Returns vector y such that self * b = y.
@@ -184,5 +182,5 @@ pub trait Permute {
   /// let u = v.permuted(&p);
   ///
   /// assert_eq!(u, Vec3::new(20.0_f64, 9.0_f64, 12.0_f64));
-  fn permuted(self, p: &Vec<usize>) -> Self;
+  fn permuted(self, p: &[usize]) -> Self;
 }

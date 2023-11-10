@@ -5,7 +5,7 @@ use vec3::Vec3;
 use vec4::Vec4;
 
 // TODO: Consider making Mat4 of a generic type instead of forcing f32.
-//       But would any other type than f64 ever be useful?
+//       But would any type other than f64 ever be useful?
 
 type Row = (f32, f32, f32, f32);
 type InlineMat4 = (
@@ -899,72 +899,88 @@ impl std::ops::Mul<Mat4> for Mat4 {
     fn mul(self, right: Mat4) -> Mat4 {
         let mut result: Mat4 = 0.0.into();
 
-        result[0][0] = self[0][0] * right[0][0]
-            + self[0][1] * right[1][0]
-            + self[0][2] * right[2][0]
-            + self[0][3] * right[3][0];
-        result[0][1] = self[0][0] * right[0][1]
-            + self[0][1] * right[1][1]
-            + self[0][2] * right[2][1]
-            + self[0][3] * right[3][1];
-        result[0][2] = self[0][0] * right[0][2]
-            + self[0][1] * right[1][2]
-            + self[0][2] * right[2][2]
-            + self[0][3] * right[3][2];
-        result[0][3] = self[0][0] * right[0][3]
-            + self[0][1] * right[1][3]
-            + self[0][2] * right[2][3]
-            + self[0][3] * right[3][3];
+        result[0][0]
+            = self[0][0] * right[0][0]
+            + self[1][0] * right[0][1]
+            + self[2][0] * right[0][2]
+            + self[3][0] * right[0][3];
+        result[0][1]
+            = self[0][1] * right[0][0]
+            + self[1][1] * right[0][1]
+            + self[2][1] * right[0][2]
+            + self[3][1] * right[0][3];
+        result[0][2]
+            = self[0][2] * right[0][0]
+            + self[1][2] * right[0][1]
+            + self[2][2] * right[0][2]
+            + self[3][2] * right[0][3];
+        result[0][3]
+            = self[0][3] * right[0][0]
+            + self[1][3] * right[0][1]
+            + self[2][3] * right[0][2]
+            + self[3][3] * right[0][3];
 
-        result[1][0] = self[1][0] * right[0][0]
-            + self[1][1] * right[1][0]
-            + self[1][2] * right[2][0]
-            + self[1][3] * right[3][0];
-        result[1][1] = self[1][0] * right[0][1]
+        result[1][0]
+            = self[0][0] * right[1][0]
+            + self[1][0] * right[1][1]
+            + self[2][0] * right[1][2]
+            + self[3][0] * right[1][3];
+        result[1][1]
+            = self[0][1] * right[1][0]
             + self[1][1] * right[1][1]
-            + self[1][2] * right[2][1]
-            + self[1][3] * right[3][1];
-        result[1][2] = self[1][0] * right[0][2]
-            + self[1][1] * right[1][2]
-            + self[1][2] * right[2][2]
-            + self[1][3] * right[3][2];
-        result[1][3] = self[1][0] * right[0][3]
-            + self[1][1] * right[1][3]
-            + self[1][2] * right[2][3]
-            + self[1][3] * right[3][3];
-
-        result[2][0] = self[2][0] * right[0][0]
-            + self[2][1] * right[1][0]
-            + self[2][2] * right[2][0]
-            + self[2][3] * right[3][0];
-        result[2][1] = self[2][0] * right[0][1]
-            + self[2][1] * right[1][1]
-            + self[2][2] * right[2][1]
-            + self[2][3] * right[3][1];
-        result[2][2] = self[2][0] * right[0][2]
             + self[2][1] * right[1][2]
-            + self[2][2] * right[2][2]
-            + self[2][3] * right[3][2];
-        result[2][3] = self[2][0] * right[0][3]
-            + self[2][1] * right[1][3]
-            + self[2][2] * right[2][3]
-            + self[2][3] * right[3][3];
+            + self[3][1] * right[1][3];
+        result[1][2]
+            = self[0][2] * right[1][0]
+            + self[1][2] * right[1][1]
+            + self[2][2] * right[1][2]
+            + self[3][2] * right[1][3];
+        result[1][3]
+            = self[0][3] * right[1][0]
+            + self[1][3] * right[1][1]
+            + self[2][3] * right[1][2]
+            + self[3][3] * right[1][3];
 
-        result[3][0] = self[3][0] * right[0][0]
-            + self[3][1] * right[1][0]
-            + self[3][2] * right[2][0]
-            + self[3][3] * right[3][0];
-        result[3][1] = self[3][0] * right[0][1]
-            + self[3][1] * right[1][1]
-            + self[3][2] * right[2][1]
-            + self[3][3] * right[3][1];
-        result[3][2] = self[3][0] * right[0][2]
-            + self[3][1] * right[1][2]
-            + self[3][2] * right[2][2]
-            + self[3][3] * right[3][2];
-        result[3][3] = self[3][0] * right[0][3]
-            + self[3][1] * right[1][3]
-            + self[3][2] * right[2][3]
+        result[2][0]
+            = self[0][0] * right[2][0]
+            + self[1][0] * right[2][1]
+            + self[2][0] * right[2][2]
+            + self[3][0] * right[2][3];
+        result[2][1]
+            = self[0][1] * right[2][0]
+            + self[1][1] * right[2][1]
+            + self[2][1] * right[2][2]
+            + self[3][1] * right[2][3];
+        result[2][2]
+            = self[0][2] * right[2][0]
+            + self[1][2] * right[2][1]
+            + self[2][2] * right[2][2]
+            + self[3][2] * right[2][3];
+        result[2][3]
+            = self[0][3] * right[2][0]
+            + self[1][3] * right[2][1]
+            + self[2][3] * right[2][2]
+            + self[3][3] * right[2][3];
+
+        result[3][0]
+            = self[0][0] * right[3][0]
+            + self[1][0] * right[3][1]
+            + self[2][0] * right[3][2]
+            + self[3][0] * right[3][3];
+        result[3][1]
+            = self[0][1] * right[3][0]
+            + self[1][1] * right[3][1]
+            + self[2][1] * right[3][2]
+            + self[3][1] * right[3][3];
+        result[3][2]
+            = self[0][2] * right[3][0]
+            + self[1][2] * right[3][1]
+            + self[2][2] * right[3][2]
+            + self[3][2] * right[3][3];
+        result[3][3]
+            = self[0][3] * right[3][0]
+            + self[1][3] * right[3][1]
+            + self[2][3] * right[3][2]
             + self[3][3] * right[3][3];
 
         result

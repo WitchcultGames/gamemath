@@ -3,7 +3,7 @@ use vec2::Vec2;
 use vec3::Vec3;
 
 // TODO: Consider making Mat3 of a generic type instead of forcing f32.
-//       But would any other type than f64 ever be useful?
+//       But would any type other than f64 ever be useful?
 
 type Row = (f32, f32, f32);
 type InlineMat3 = (f32, f32, f32, f32, f32, f32, f32, f32, f32);
@@ -384,25 +384,25 @@ impl std::ops::Mul<Mat3> for Mat3 {
         let mut result: Mat3 = 0.0.into();
 
         result[0][0] =
-            self[0][0] * right[0][0] + self[0][1] * right[1][0] + self[0][2] * right[2][0];
+            self[0][0] * right[0][0] + self[1][0] * right[0][1] + self[2][0] * right[0][2];
         result[0][1] =
-            self[0][0] * right[0][1] + self[0][1] * right[1][1] + self[0][2] * right[2][1];
+            self[0][1] * right[0][0] + self[1][1] * right[0][1] + self[2][1] * right[0][2];
         result[0][2] =
-            self[0][0] * right[0][2] + self[0][1] * right[1][2] + self[0][2] * right[2][2];
+            self[0][2] * right[0][0] + self[1][2] * right[0][1] + self[2][2] * right[0][2];
 
         result[1][0] =
-            self[1][0] * right[0][0] + self[1][1] * right[1][0] + self[1][2] * right[2][0];
+            self[0][0] * right[1][0] + self[1][0] * right[1][1] + self[2][0] * right[1][2];
         result[1][1] =
-            self[1][0] * right[0][1] + self[1][1] * right[1][1] + self[1][2] * right[2][1];
+            self[0][1] * right[1][0] + self[1][1] * right[1][1] + self[2][1] * right[1][2];
         result[1][2] =
-            self[1][0] * right[0][2] + self[1][1] * right[1][2] + self[1][2] * right[2][2];
+            self[0][2] * right[1][0] + self[1][2] * right[1][1] + self[2][2] * right[1][2];
 
         result[2][0] =
-            self[2][0] * right[0][0] + self[2][1] * right[1][0] + self[2][2] * right[2][0];
+            self[0][0] * right[2][0] + self[1][0] * right[2][1] + self[2][0] * right[2][2];
         result[2][1] =
-            self[2][0] * right[0][1] + self[2][1] * right[1][1] + self[2][2] * right[2][1];
+            self[0][1] * right[2][0] + self[1][1] * right[2][1] + self[2][1] * right[2][2];
         result[2][2] =
-            self[2][0] * right[0][2] + self[2][1] * right[1][2] + self[2][2] * right[2][2];
+            self[0][2] * right[2][0] + self[1][2] * right[2][1] + self[2][2] * right[2][2];
 
         result
     }

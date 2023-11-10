@@ -1,6 +1,6 @@
-//! A simple math library containing the most common data structures used for 3D rendering and
+//! A simple math library containing the most common data structures used for 2D/3D rendering and
 //! general game development.
-
+//!
 mod curve;
 mod mat2;
 mod mat3;

@@ -8,7 +8,7 @@ type InlineMat2 = (f32, f32, f32, f32);
 /// and 2D rendering.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Mat2 {
-    /// The three rows of the matrix, represented by an array of three `Vec2<f32>` objects.
+    /// The two rows of the matrix, represented by an array of two `Vec2<f32>` objects.
     pub rows: [Vec2<f32>; 2],
 }
 
@@ -317,14 +317,14 @@ impl std::ops::Mul<Mat2> for Mat2 {
         let mut result: Mat2 = 0.0.into();
 
         result[0][0] =
-            self[0][0] * right[0][0] + self[0][1] * right[1][0];
+            self[0][0] * right[0][0] + self[1][0] * right[0][1];
         result[0][1] =
-            self[0][0] * right[0][1] + self[0][1] * right[1][1];
+            self[0][1] * right[0][0] + self[1][1] * right[0][1];
         
         result[1][0] =
-            self[1][0] * right[0][0] + self[1][1] * right[1][0];
+            self[0][0] * right[1][0] + self[1][0] * right[1][1];
         result[1][1] =
-            self[1][0] * right[0][1] + self[1][1] * right[1][1];
+            self[0][1] * right[1][0] + self[1][1] * right[1][1];
 
         result
     }
